@@ -1,7 +1,7 @@
 "use client";
 
-import { useQuery } from "convex/react";
-import { api } from "../convex/_generated/api";
+// import { useQuery } from "convex/react";
+// import { api } from "../convex/_generated/api";
 import { useEffect, useState } from "react";
 
 import SetupPanel from "@/components/SetupPanel";
@@ -10,11 +10,17 @@ import ResultsPanel from "@/components/ResultsPanel";
 // import { Authenticated, Unauthenticated } from "convex/react";
 
 export default function Home() {
+  type HistoryItem = {
+    items: string[];
+    currentIndex: number;
+    comparisonIndex: number;
+  };
+
   type ComparisonPanelState = {
     items: string[];
     currentIndex: number;
     comparisonIndex: number;
-    history: any[];
+    history: HistoryItem[];
   };
 
   const [list, setList] = useState<string[]>([]);
