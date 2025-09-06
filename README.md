@@ -40,10 +40,6 @@ To get a local copy up and running, follow these simple steps.
 
 - npm
 
-  ```sh
-  npm install npm@latest -g
-  ```
-
 ### Installation
 
 1. Clone the repo
@@ -96,4 +92,3 @@ Here are some of the features planned for the future to make **Totally Biased** 
   - [ ] Add image URLs to items for a more visual comparison experience.
 
 Have an idea? Feel free to open an issue or contribute!
-
