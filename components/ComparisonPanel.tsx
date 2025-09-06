@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 
@@ -8,29 +8,53 @@ const ComparisonPanel = ({
   className,
   list,
   setList,
+  unfinishedState,
   onRankingComplete,
 }: {
   className?: string;
   list: string[];
   setList: (list: string[]) => void;
+  unfinishedState?: {
+    items: string[];
+    currentIndex: number;
+    comparisonIndex: number;
+    history: any[];
+  };
   onRankingComplete: (rankedList: string[]) => void;
 }) => {
-  const [items, setItems] = useState([...list]);
-  const [currentIndex, setCurrentIndex] = useState(1);
-  const [comparisonIndex, setComparisonIndex] = useState(0);
-  const [history, setHistory] = useState<any[]>([]);
+  const [items, setItems] = useState(
+    unfinishedState ? unfinishedState.items : [...list],
+  );
+  const [currentIndex, setCurrentIndex] = useState(
+    unfinishedState ? unfinishedState.currentIndex : 1,
+  );
+  const [comparisonIndex, setComparisonIndex] = useState(
+    unfinishedState ? unfinishedState.comparisonIndex : 0,
+  );
+  const [history, setHistory] = useState<any[]>(
+    unfinishedState ? unfinishedState.history : [],
+  );
 
   useEffect(() => {
-    if (list.length === 1) {
-      toast.error("Please provide at least two items to compare.");
-      setList([]);
-    } else {
-      setItems([...list]);
-      setCurrentIndex(1);
-      setComparisonIndex(0);
-      setHistory([]);
+    // This effect runs when the list from props changes, but not if we are restoring a session.
+    if (!unfinishedState) {
+      if (list.length === 1) {
+        toast.error("Please provide at least two items to compare.");
+        setList([]);
+      } else {
+        setItems([...list]);
+        setCurrentIndex(1);
+        setComparisonIndex(0);
+        setHistory([]);
+      }
     }
-  }, [list, setList]);
+  }, [list, setList, unfinishedState]);
+
+  useEffect(() => {
+    // This effect saves the current state to localStorage on every change.
+    const stateToSave = { items, currentIndex, comparisonIndex, history };
+    localStorage.setItem("comparisonPanelState", JSON.stringify(stateToSave));
+  }, [items, currentIndex, comparisonIndex, history]);
 
   const handleChoice = (winner: "itemToInsert" | "comparisonItem") => {
     setHistory([...history, { items, currentIndex, comparisonIndex }]);
@@ -116,4 +140,3 @@ const ComparisonPanel = ({
 };
 
 export default ComparisonPanel;
-
