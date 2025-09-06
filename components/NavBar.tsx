@@ -25,28 +25,30 @@ const NavBar: React.FC<NavBarProps> = ({
   onClick,
 }) => {
   return (
-    <div
-      className={`${className} flex flex-wrap items-center justify-between relative p-4`}
-      onClick={onClick}
-    >
-      <div className="flex-start">
-        <Authenticated>
-          <UserButton />
-        </Authenticated>
-        <Unauthenticated>
-          <SignInButton>
-            <Button className="cursor-pointer">
-              Sign In
-            </Button>
-          </SignInButton>
-        </Unauthenticated>
-      </div>
-      {/* <NavigationMenu className="gap-4"> */}
-      {/*   <NavigationMenuLink href="/">Home</NavigationMenuLink> */}
-      {/*   <NavigationMenuLink href="/app">App</NavigationMenuLink> */}
-      {/* </NavigationMenu> */}
-      <div className="flex-end">
-        <ModeToggle />
+    <div className="w-full flex justify-center">
+      <div
+        className={`${className} flex flex-wrap items-center justify-between relative p-6 max-w-3xl w-full`}
+        onClick={onClick}
+      >
+        <div className="flex-start">
+          <Authenticated>
+            <UserButton />
+          </Authenticated>
+          <Unauthenticated>
+            <SignInButton>
+              <Button className="cursor-pointer">
+                Sign In
+              </Button>
+            </SignInButton>
+          </Unauthenticated>
+        </div>
+        {/* <NavigationMenu className="gap-4"> */}
+        {/*   <NavigationMenuLink href="/">Home</NavigationMenuLink> */}
+        {/*   <NavigationMenuLink href="/app">App</NavigationMenuLink> */}
+        {/* </NavigationMenu> */}
+        <div className="flex-end">
+          <ModeToggle />
+        </div>
       </div>
     </div>
   );
