@@ -38,7 +38,11 @@ To get a local copy up and running, follow these simple steps.
 
 ### Prerequisites
 
-- | [npm](https://nodejs.org/es/)
+- npm
+
+  ```sh
+  npm install npm@latest -g
+  ```
 
 ### Installation
 
@@ -64,16 +68,32 @@ Now, open [http://localhost:3000](http://localhost:3000) in your browser to see 
 
 ### Example Lists
 
-Here are some example lists you can use to get started:
-
-- **Fruits**
-
 ```
 Apple, Banana, Orange, Strawberry, Grape, Watermelon, Lemon, Cherry, Peach, Pear, Blueberry, Pineapple, Mango, Kiwi, Plum, Avocado, Coconut
 ```
 
-- **Movies**
-
 ```
 The Shawshank Redemption, The Godfather, The Dark Knight, Pulp Fiction, Forrest Gump, Inception, The Matrix, Fight Club, The Lord of the Rings: The Return of the King, Interstellar, Gladiator, The Lion King, Titanic, Jurassic Park, Star Wars: Episode IV - A New Hope
 ```
+
+---
+
+## 🗺️ Roadmap
+
+Here are some of the features planned for the future to make **Totally Biased** even better!
+
+- [ ] **User Accounts & Database Integration**
+  - [ ] Save unfinished comparisons to your account so you can continue them later on any device.
+  - [ ] Save completed rankings to your account.
+  - [ ] A dedicated page to view all your saved rankings.
+- [ ] **Enhanced Results Screen**
+  - [ ] A "Copy to Clipboard" button to easily share your text-based list.
+  - [ ] A "Save to Account" button to persist your masterpiece.
+- [ ] **Sharing & Social Features**
+  - [ ] Generate a public, shareable link for your completed rankings.
+  - [ ] View aggregated "community rankings" for popular item sets.
+- [ ] **Richer Content**
+  - [ ] Add image URLs to items for a more visual comparison experience.
+
+Have an idea? Feel free to open an issue or contribute!
+
