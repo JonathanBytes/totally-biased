@@ -18,6 +18,7 @@ const ComparisonPanel = ({
   const [items, setItems] = useState([...list]);
   const [currentIndex, setCurrentIndex] = useState(1);
   const [comparisonIndex, setComparisonIndex] = useState(0);
+  const [history, setHistory] = useState<any[]>([]);
 
   useEffect(() => {
     if (list.length === 1) {
@@ -27,10 +28,12 @@ const ComparisonPanel = ({
       setItems([...list]);
       setCurrentIndex(1);
       setComparisonIndex(0);
+      setHistory([]);
     }
   }, [list, setList]);
 
   const handleChoice = (winner: "itemToInsert" | "comparisonItem") => {
+    setHistory([...history, { items, currentIndex, comparisonIndex }]);
     let newItems = [...items];
     if (winner === "itemToInsert") {
       if (comparisonIndex > 0) {
@@ -55,6 +58,16 @@ const ComparisonPanel = ({
     }
   };
 
+  const handleUndo = () => {
+    if (history.length > 0) {
+      const lastState = history[history.length - 1];
+      setItems(lastState.items);
+      setCurrentIndex(lastState.currentIndex);
+      setComparisonIndex(lastState.comparisonIndex);
+      setHistory(history.slice(0, -1));
+    }
+  };
+
   if (list.length < 2) {
     return null;
   }
@@ -62,11 +75,19 @@ const ComparisonPanel = ({
   const itemToInsert = items[currentIndex];
   const comparisonItem = items[comparisonIndex];
 
+  const progress = (currentIndex / items.length) * 100;
+
   return (
     <div
       className={`${className} flex items-center flex-col max-w-2xl w-full`}
     >
       <h2 className="text-2xl text-left w-full">Which one do you prefer?</h2>
+      <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 my-4">
+        <div
+          className="bg-purple-500 h-2.5 rounded-full transition-all duration-500"
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
       <div className="flex justify-around w-full my-4">
         <Button
           onClick={() => handleChoice("itemToInsert")}
@@ -84,9 +105,12 @@ const ComparisonPanel = ({
       <p className="text-left w-full">
         Sorted items: {items.slice(0, currentIndex).join(", ")}
       </p>
-      <Button onClick={() => setList([])} className="mt-4">
-        Reset List
-      </Button>
+      <div className="flex gap-4 mt-4">
+        <Button onClick={() => setList([])}>Reset List</Button>
+        <Button onClick={handleUndo} disabled={history.length === 0}>
+          Undo
+        </Button>
+      </div>
     </div>
   );
 };
