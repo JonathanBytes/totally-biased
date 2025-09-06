@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { Button } from "./ui/button";
-import { HistoryItem } from "@/lib/types";
+import { useComparison } from "@/lib/hooks/useComparison";
+import { ComparisonPanelState } from "@/lib/types";
 
 const ComparisonPanel = ({
   className,
@@ -15,92 +14,23 @@ const ComparisonPanel = ({
   className?: string;
   list: string[];
   setList: (list: string[]) => void;
-  unfinishedState?: {
-    items: string[];
-    currentIndex: number;
-    comparisonIndex: number;
-    history: HistoryItem[];
-  };
+  unfinishedState?: ComparisonPanelState;
   onRankingComplete: (rankedList: string[]) => void;
 }) => {
-  const [items, setItems] = useState(
-    unfinishedState ? unfinishedState.items : [...list],
-  );
-  const [currentIndex, setCurrentIndex] = useState(
-    unfinishedState ? unfinishedState.currentIndex : 1,
-  );
-  const [comparisonIndex, setComparisonIndex] = useState(
-    unfinishedState ? unfinishedState.comparisonIndex : 0,
-  );
-  const [history, setHistory] = useState<HistoryItem[]>(
-    unfinishedState ? unfinishedState.history : [],
-  );
-
-  useEffect(() => {
-    // This effect runs when the list from props changes, but not if we are restoring a session.
-    if (!unfinishedState) {
-      if (list.length === 1) {
-        toast.error("Please provide at least two items to compare.");
-        setList([]);
-      } else {
-        setItems([...list]);
-        setCurrentIndex(1);
-        setComparisonIndex(0);
-        setHistory([]);
-      }
-    }
-  }, [list, setList, unfinishedState]);
-
-  useEffect(() => {
-    // This effect saves the current state to localStorage on every change.
-    const stateToSave = { items, currentIndex, comparisonIndex, history };
-    localStorage.setItem("comparisonPanelState", JSON.stringify(stateToSave));
-  }, [items, currentIndex, comparisonIndex, history]);
-
-  const handleChoice = (winner: "itemToInsert" | "comparisonItem") => {
-    setHistory([...history, { items, currentIndex, comparisonIndex }]);
-    const newItems = [...items];
-    if (winner === "itemToInsert") {
-      if (comparisonIndex > 0) {
-        setComparisonIndex(comparisonIndex - 1);
-        return;
-      } else {
-        const [item] = newItems.splice(currentIndex, 1);
-        newItems.splice(0, 0, item);
-      }
-    } else {
-      // winner === "comparisonItem"
-      const [item] = newItems.splice(currentIndex, 1);
-      newItems.splice(comparisonIndex + 1, 0, item);
-    }
-
-    if (currentIndex + 1 >= newItems.length) {
-      onRankingComplete(newItems);
-    } else {
-      setItems(newItems);
-      setCurrentIndex(currentIndex + 1);
-      setComparisonIndex(currentIndex);
-    }
-  };
-
-  const handleUndo = () => {
-    if (history.length > 0) {
-      const lastState = history[history.length - 1];
-      setItems(lastState.items);
-      setCurrentIndex(lastState.currentIndex);
-      setComparisonIndex(lastState.comparisonIndex);
-      setHistory(history.slice(0, -1));
-    }
-  };
+  const {
+    items,
+    currentIndex,
+    itemToInsert,
+    comparisonItem,
+    progress,
+    history,
+    handleChoice,
+    handleUndo,
+  } = useComparison(list, setList, onRankingComplete, unfinishedState);
 
   if (list.length < 2) {
     return null;
   }
-
-  const itemToInsert = items[currentIndex];
-  const comparisonItem = items[comparisonIndex];
-
-  const progress = (currentIndex / items.length) * 100;
 
   return (
     <div
@@ -111,8 +41,7 @@ const ComparisonPanel = ({
         <div
           className="bg-purple-500 h-2.5 rounded-full transition-all duration-500"
           style={{ width: `${progress}%` }}
-        >
-        </div>
+        ></div>
       </div>
       <div className="flex justify-around w-full my-4">
         <Button
