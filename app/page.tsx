@@ -3,6 +3,7 @@
 // import { useQuery } from "convex/react";
 // import { api } from "../convex/_generated/api";
 import { useEffect, useState } from "react";
+import { ComparisonPanelState } from "@/lib/types";
 
 import SetupPanel from "@/components/SetupPanel";
 import ComparisonPanel from "@/components/ComparisonPanel";

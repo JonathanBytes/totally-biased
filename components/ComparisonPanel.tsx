@@ -3,12 +3,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
-
-type HistoryItem = {
-  items: string[];
-  currentIndex: number;
-  comparisonIndex: number;
-};
+import { HistoryItem } from "@/lib/types";
 
 const ComparisonPanel = ({
   className,
