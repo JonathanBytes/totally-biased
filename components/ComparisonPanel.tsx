@@ -4,6 +4,12 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 
+type HistoryItem = {
+  items: string[];
+  currentIndex: number;
+  comparisonIndex: number;
+};
+
 const ComparisonPanel = ({
   className,
   list,
@@ -18,7 +24,7 @@ const ComparisonPanel = ({
     items: string[];
     currentIndex: number;
     comparisonIndex: number;
-    history: any[];
+    history: HistoryItem[];
   };
   onRankingComplete: (rankedList: string[]) => void;
 }) => {
@@ -31,7 +37,7 @@ const ComparisonPanel = ({
   const [comparisonIndex, setComparisonIndex] = useState(
     unfinishedState ? unfinishedState.comparisonIndex : 0,
   );
-  const [history, setHistory] = useState<any[]>(
+  const [history, setHistory] = useState<HistoryItem[]>(
     unfinishedState ? unfinishedState.history : [],
   );
 
@@ -58,7 +64,7 @@ const ComparisonPanel = ({
 
   const handleChoice = (winner: "itemToInsert" | "comparisonItem") => {
     setHistory([...history, { items, currentIndex, comparisonIndex }]);
-    let newItems = [...items];
+    const newItems = [...items];
     if (winner === "itemToInsert") {
       if (comparisonIndex > 0) {
         setComparisonIndex(comparisonIndex - 1);
@@ -110,7 +116,8 @@ const ComparisonPanel = ({
         <div
           className="bg-purple-500 h-2.5 rounded-full transition-all duration-500"
           style={{ width: `${progress}%` }}
-        ></div>
+        >
+        </div>
       </div>
       <div className="flex justify-around w-full my-4">
         <Button
