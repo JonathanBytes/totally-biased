@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
+import { ClipboardCheck, ClipboardCopy } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -33,17 +33,13 @@ const ResultsPanel = ({
       <div className="flex justify-between w-full items-center">
         <h2 className="text-2xl text-left">Here is your ranked list:</h2>
         <Button onClick={onCopy} variant="ghost" size="icon">
-          {copied ? (
-            <Check className="h-4 w-4" />
-          ) : (
-            <Copy className="h-4 w-4" />
-          )}
+          {copied
+            ? <ClipboardCheck className="size-5" />
+            : <ClipboardCopy className="size-5" />}
         </Button>
       </div>
       <ol className="text-left w-full list-decimal list-inside my-4">
-        {list.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
+        {list.map((item, index) => <li key={index}>{item}</li>)}
       </ol>
       <Button onClick={() => setList([])}>Start Over</Button>
     </div>
