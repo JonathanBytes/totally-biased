@@ -70,14 +70,18 @@ export default function Home() {
   if (isRanked) {
     currentPanel = <ResultsPanel list={list} setList={handleSetList} />;
   } else if (unfinishedComparison) {
-    currentPanel = (
-      <ComparisonPanel
-        list={unfinishedComparison.items}
-        setList={handleSetList}
-        unfinishedState={unfinishedComparison}
-        onRankingComplete={handleRankingComplete}
-      />
-    );
+    if (unfinishedComparison.items.length <= 1) {
+      localStorage.removeItem("comparisonPanelState");
+    } else {
+      currentPanel = (
+        <ComparisonPanel
+          list={unfinishedComparison.items}
+          setList={handleSetList}
+          unfinishedState={unfinishedComparison}
+          onRankingComplete={handleRankingComplete}
+        />
+      );
+    }
   } else if (list.length === 0) {
     currentPanel = <SetupPanel list={list} setList={handleSetList} />;
   } else {
