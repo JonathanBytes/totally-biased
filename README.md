@@ -83,7 +83,7 @@ Here are some of the features planned for the future to make **Totally Biased** 
   - [ ] Save completed rankings to your account.
   - [ ] A dedicated page to view all your saved rankings.
 - [ ] **Enhanced Results Screen**
-  - [ ] A "Copy to Clipboard" button to easily share your text-based list.
+  - [x] A "Copy to Clipboard" button to easily share your text-based list.
   - [ ] A "Save to Account" button to persist your masterpiece.
 - [ ] **Sharing & Social Features**
   - [ ] Generate a public, shareable link for your completed rankings.
