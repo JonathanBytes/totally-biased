@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "./ui/button";
+import { toast } from "sonner";
 
 interface SetupPanelProps {
   className?: string;
@@ -20,6 +21,12 @@ const SetupPanel: React.FC<SetupPanelProps> = (
   function handleTextareaChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
     const input = event.target.value;
     setInputValue(input);
+  }
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+      handleStartClick();
+    }
   }
 
   function handleStartClick() {
@@ -43,7 +50,13 @@ const SetupPanel: React.FC<SetupPanelProps> = (
 
     const uniqueItems = Array.from(uniqueItemsMap.values());
     console.log("Parsed items:", uniqueItems);
-    setList(uniqueItems);
+
+    if (uniqueItems.length < 2) {
+      toast.error("Please provide at least two unique items to compare.");
+      setList([]);
+    } else {
+      setList(uniqueItems);
+    }
   }
 
   return (
@@ -66,6 +79,8 @@ const SetupPanel: React.FC<SetupPanelProps> = (
           id="item-list"
           placeholder={list.length > 0 ? `${list}` : `Apple, Banana, Orange`}
           onChange={handleTextareaChange}
+          onKeyDown={handleKeyDown}
+          autoFocus
         />
         <div className="flex justify-end">
           <Button className="w-fit" type="submit" onClick={handleStartClick}>
