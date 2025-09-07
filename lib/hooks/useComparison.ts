@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { HistoryItem, ComparisonPanelState } from "@/lib/types";
+import { ComparisonPanelState, HistoryItem } from "@/lib/types";
 
 export const useComparison = (
   list: string[],
@@ -20,20 +20,6 @@ export const useComparison = (
   const [history, setHistory] = useState<HistoryItem[]>(
     unfinishedState ? unfinishedState.history : [],
   );
-
-  useEffect(() => {
-    if (!unfinishedState) {
-      if (list.length === 1) {
-        toast.error("Please provide at least two items to compare.");
-        setList([]);
-      } else {
-        setItems([...list]);
-        setCurrentIndex(1);
-        setComparisonIndex(0);
-        setHistory([]);
-      }
-    }
-  }, [list, setList, unfinishedState]);
 
   useEffect(() => {
     const stateToSave = { items, currentIndex, comparisonIndex, history };
