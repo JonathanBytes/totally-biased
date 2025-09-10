@@ -40,7 +40,7 @@ export default function Home() {
       } catch (e) {
         console.error(
           "Failed to parse comparisonPanelState from localStorage",
-          e,
+          e
         );
         localStorage.removeItem("comparisonPanelState");
       }
@@ -99,14 +99,14 @@ export default function Home() {
       {/* <Unauthenticated> */}
       {/*   <p>Unauthenticated</p> */}
       {/* </Unauthenticated> */}
-      <main className="flex flex-col items-center justify-center gap-4 px-4">
+      <section>
         <h1 className="text-7xl font-bold text-center">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-purple-500 to-cyan-500">
             Totally biased
           </span>
         </h1>
-        {currentPanel}
-      </main>
+      </section>
+      <section>{currentPanel}</section>
     </>
   );
 }

@@ -42,8 +42,12 @@ export default function RootLayout({
               disableTransitionOnChange
             >
               <Toaster richColors position="top-right" />
-              <NavBar />
-              {children}
+              <header>
+                <NavBar />
+              </header>
+              <main className="flex flex-col items-center justify-center gap-4 px-4">
+                {children}
+              </main>
             </ThemeProvider>
           </ConvexClientProvider>
         </ClerkProvider>
