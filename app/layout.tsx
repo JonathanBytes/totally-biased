@@ -43,10 +43,10 @@ export default function RootLayout({
               disableTransitionOnChange
             >
               <Toaster richColors position="top-right" />
-              <header>
+              <header className="flex items-center justify-center w-full">
                 <NavBar />
               </header>
-              <main className="flex flex-col items-center justify-center gap-4 px-4">
+              <main className="flex flex-col items-center justify-center gap-8 px-4">
                 {children}
               </main>
             </ThemeProvider>
