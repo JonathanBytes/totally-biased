@@ -80,15 +80,18 @@ Here are some of the features planned for the future to make **Totally Biased** 
 
 - [ ] **User Accounts & Database Integration**
   - [ ] Save unfinished comparisons to your account so you can continue them later on any device.
-  - [ ] Save completed rankings to your account.
-  - [ ] A dedicated page to view all your saved rankings.
+  - [x] Save completed rankings to your account.
+  - [x] A dedicated page to view all your saved rankings.
 - [ ] **Enhanced Results Screen**
   - [x] A "Copy to Clipboard" button to easily share your text-based list.
-  - [ ] A "Save to Account" button to persist your masterpiece.
-- [ ] **Sharing & Social Features**
+  - [x] A "Save to Account" button to persist your masterpiece.
+- [ ] **Sharing & Social Features?**
   - [ ] Generate a public, shareable link for your completed rankings.
   - [ ] View aggregated "community rankings" for popular item sets.
 - [ ] **Richer Content**
   - [ ] Add image URLs to items for a more visual comparison experience.
+- [ ] **UI Improvements**
+  - [ ] Enhance the ListCards layout using a bento grid approach to better handle cards with too much content.
+  - [ ] Fix the bug in the DrawerComponent where clicking multiple times quickly after the drawer disappears can save the list multiple times.
 
 Have an idea? Feel free to open an issue or contribute!
