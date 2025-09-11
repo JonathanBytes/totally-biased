@@ -34,7 +34,7 @@ const ComparisonPanel = ({
 
   return (
     <div
-      className={`${className} flex items-center flex-col max-w-2xl w-full`}
+      className={`${className} flex items-center flex-col max-w-2xl w-full md:min-w-[500px]`}
     >
       <h2 className="text-2xl text-left w-full">Which one do you prefer?</h2>
       <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 my-4">
