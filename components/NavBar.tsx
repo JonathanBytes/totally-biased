@@ -29,9 +29,21 @@ const NavBar: React.FC<NavBarProps> = ({ className = "", onClick }) => {
       onClick={onClick}
     >
       <div className="flex items-center gap-3 flex-start">
-        <Link href="/" className="inline-flex">
-          <Button variant="ghost" size="icon" className="cursor-pointer">
-            <Home className="size-4" />
+        <Link
+          href="/"
+          className="inline-flex"
+          aria-label="Go to home page"
+          role="navigation"
+        >
+          <Button
+            variant="ghost"
+            size="icon"
+            className="cursor-pointer"
+            aria-label="Home"
+            title="Go to home page"
+          >
+            <Home className="size-4" aria-hidden="true" />
+            <span className="sr-only">Home</span>
           </Button>
         </Link>
         <Authenticated>
