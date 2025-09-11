@@ -19,7 +19,6 @@ export default ListPage;
 
 function Content() {
   const lists = useQuery(api.sortedLists.getForCurrentUserByUpdatedAt);
-  console.log("lists", lists);
   if (!lists) {
     return <div>Loading...</div>;
   }

@@ -46,7 +46,7 @@ export const getForCurrentUser = query({
   },
 });
 
-// Get all sorted lists for the current used, ordered by updatedAt
+// Get all sorted lists for the current user, ordered by updatedAt
 export const getForCurrentUserByUpdatedAt = query({
   args: {},
   handler: async (ctx) => {
