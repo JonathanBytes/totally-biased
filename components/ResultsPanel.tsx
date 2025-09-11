@@ -35,7 +35,9 @@ const ResultsPanel = ({
       className={`${className} flex items-center flex-col max-w-2xl w-full md:min-w-[500px]`}
     >
       <div className="flex justify-between w-full items-center flex-wrap gap-4">
-        <h2 className="text-2xl text-left">Here is your ranked list:</h2>
+        <h2 className="text-2xl text-left">
+          Here is your <span className="font-bold">totally biased</span> list:
+        </h2>
         <Button onClick={onCopy} variant="outline" size="sm">
           {copied ? (
             <ClipboardCheck className="size-4" />
