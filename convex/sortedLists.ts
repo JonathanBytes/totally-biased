@@ -63,3 +63,26 @@ export const getForCurrentUserByUpdatedAt = query({
     return lists.sort((a, b) => b.updatedAt - a.updatedAt);
   },
 });
+
+// Delete a sorted list
+export const deleteList = mutation({
+  args: { id: v.id("sortedLists") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
+    const list = await ctx.db.get(args.id);
+
+    if (list === null) {
+      throw new Error("List not found");
+    }
+
+    if (list.userId !== identity.subject) {
+      throw new Error("Not authorized to delete this list");
+    }
+
+    await ctx.db.delete(args.id);
+  },
+});

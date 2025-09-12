@@ -56,7 +56,9 @@ const NavBar: React.FC<NavBarProps> = ({ className = "", onClick }) => {
                 variant={pathname === "/lists" ? "outline" : "ghost"}
                 size="sm"
                 className={`cursor-pointer ${
-                  pathname === "/lists" ? "font-bold " : ""
+                  pathname === "/lists"
+                    ? "font-bold bg-card/5 backdrop-blur-xs card "
+                    : ""
                 }`}
               >
                 <List className="size-4" />

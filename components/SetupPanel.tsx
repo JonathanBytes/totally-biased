@@ -66,7 +66,7 @@ const SetupPanel: React.FC<SetupPanelProps> = (
     >
       <p className="text-left w-full">
         Totally biased is a{" "}
-        <span className="font-mono text-sm dark:bg-neutral-700 dark:text-neutral-300 bg-cyan-400 text-neutral-700 rounded px-1 size-0.5">
+        <span className="font-mono text-sm dark:bg-neutral-700 dark:text-neutral-300 bg-neutral-100 text-neutral-900 rounded px-1 size-0.5">
           subjective sort
         </span>{" "}
         app to rank by taste, bias, and gut instinct. The list should be
@@ -77,14 +77,16 @@ const SetupPanel: React.FC<SetupPanelProps> = (
         <Label htmlFor="item-list" className="mb-2">
           Type your list to rank
         </Label>
-        <Textarea
-          className="mb-2"
-          id="item-list"
-          placeholder={list.length > 0 ? `${list}` : `Apple, Banana, Orange`}
-          onChange={handleTextareaChange}
-          onKeyDown={handleKeyDown}
-          autoFocus
-        />
+        <div className="card aria-hidden mb-2 backdrop-blur-[2px] rounded-md">
+          <Textarea
+            className="rounded-md"
+            id="item-list"
+            placeholder={list.length > 0 ? `${list}` : `Apple, Banana, Orange`}
+            onChange={handleTextareaChange}
+            onKeyDown={handleKeyDown}
+            autoFocus
+          />
+        </div>
         <div className="flex justify-end items-center gap-2">
           <p className="text-sm text-neutral-500">Ctrl + Enter</p>
           <Button

@@ -49,6 +49,8 @@ export default function RootLayout({
               <main className="flex flex-col items-center justify-center gap-8 px-4">
                 {children}
               </main>
+              {/* Grid pattern background */}
+              <div className="w-full h-full grid-background z-[-10] fixed top-0 left-0 pointer-events-none area-hidden" />
             </ThemeProvider>
           </ConvexClientProvider>
         </body>
