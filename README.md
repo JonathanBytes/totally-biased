@@ -92,6 +92,6 @@ Here are some of the features planned for the future to make **Totally Biased** 
   - [ ] Add image URLs to items for a more visual comparison experience.
 - [ ] **UI Improvements**
   - [ ] Enhance the ListCards layout using a bento grid approach to better handle cards with too much content.
-  - [ ] Fix the bug in the DrawerComponent where clicking multiple times quickly after the drawer disappears can save the list multiple times.
+  - [x] Fix the bug in the DrawerComponent where clicking multiple times quickly after the drawer disappears can save the list multiple times.
 
 Have an idea? Feel free to open an issue or contribute!
