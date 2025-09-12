@@ -19,6 +19,7 @@ const ResultsPanel = ({
   setList: (list: string[]) => void;
 }) => {
   const [copied, setCopied] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const onCopy = () => {
     navigator.clipboard.writeText(list.join("\n"));
@@ -39,22 +40,31 @@ const ResultsPanel = ({
           Here is your <span className="font-bold">totally biased</span> list:
         </h2>
         <Button onClick={onCopy} variant="outline" size="sm">
-          {copied ? (
-            <ClipboardCheck className="size-4" />
-          ) : (
-            <ClipboardCopy className="size-4" />
-          )}{" "}
-          Copy
+          {copied
+            ? <ClipboardCheck className="size-4" />
+            : <ClipboardCopy className="size-4" />} Copy
         </Button>
       </div>
       <ol className="text-left w-full list-decimal list-inside my-4">
-        {list.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
+        {list.map((item, index) => <li key={index}>{item}</li>)}
       </ol>
       <div className="flex gap-4 w-full justify-end">
         <Authenticated>
-          <SaveListDrawer list={list} />
+          <SaveListDrawer
+            list={list}
+            isOpen={isDrawerOpen}
+            onClose={() => {
+              setIsDrawerOpen(false);
+            }}
+            hideTrigger
+          />
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setIsDrawerOpen(true)}
+          >
+            Save list to your account
+          </Button>
         </Authenticated>
         <Unauthenticated>
           <Link href="/sign-in?redirect_url=/lists">
