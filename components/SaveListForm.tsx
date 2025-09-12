@@ -33,6 +33,7 @@ const SaveListForm = ({
       setTitle("");
       setDescription("");
       toast.success("List saved successfully!");
+      localStorage.removeItem("unsavedList");
       closeDrawer();
     } catch (error) {
       console.error("Error saving list:", error);

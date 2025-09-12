@@ -11,18 +11,26 @@ import {
 } from "./ui/drawer";
 import { Button } from "./ui/button";
 
-import { useState } from "react";
-
-const SaveListDrawer = ({ list }: { list: string[] }) => {
-  const [open, setOpen] = useState(false);
-
+const SaveListDrawer = ({
+  list,
+  isOpen,
+  onClose,
+  hideTrigger = false,
+}: {
+  list: string[];
+  isOpen?: boolean;
+  onClose?: () => void;
+  hideTrigger?: boolean;
+}) => {
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <Button variant="secondary" size="sm">
-          Save list to your account
-        </Button>
-      </DrawerTrigger>
+    <Drawer open={isOpen} onOpenChange={onClose}>
+      {!hideTrigger && (
+        <DrawerTrigger asChild>
+          <Button variant="secondary" size="sm">
+            Save list to your account
+          </Button>
+        </DrawerTrigger>
+      )}
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
@@ -32,7 +40,7 @@ const SaveListDrawer = ({ list }: { list: string[] }) => {
             </DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pb-0">
-            <SaveListForm list={list} closeDrawer={() => setOpen(false)} />
+            <SaveListForm list={list} closeDrawer={() => onClose?.()} />
           </div>
           <DrawerFooter>
             <DrawerClose asChild>

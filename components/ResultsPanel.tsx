@@ -57,9 +57,14 @@ const ResultsPanel = ({
           <SaveListDrawer list={list} />
         </Authenticated>
         <Unauthenticated>
-          {/* This should store the list while the user logs in or signs up, currently deletes the list*/}
-          <Link href="/login">
-            <Button variant="secondary" size="sm">
+          <Link href="/sign-in?redirect_url=/lists">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                localStorage.setItem("unsavedList", JSON.stringify(list));
+              }}
+            >
               Save list to your account
             </Button>
           </Link>
