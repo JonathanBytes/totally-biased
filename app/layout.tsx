@@ -7,6 +7,7 @@ import { shadcn } from "@clerk/themes";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import NavBar from "@/components/NavBar";
+import { Footer } from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,15 +43,18 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <Toaster richColors position="top-right" />
-              <header className="flex items-center justify-center w-full">
-                <NavBar />
-              </header>
-              <main className="flex flex-col items-center justify-center gap-8 px-4">
-                {children}
-              </main>
-              {/* Grid pattern background */}
-              <div className="w-full h-full grid-background z-[-10] fixed top-0 left-0 pointer-events-none area-hidden" />
+              <div className="flex flex-col min-h-screen">
+                <Toaster richColors position="top-right" />
+                <header className="flex items-center justify-center w-full">
+                  <NavBar />
+                </header>
+                <main className="flex flex-1 flex-col items-center justify-center gap-8 px-4">
+                  {children}
+                </main>
+                <Footer />
+                {/* Grid pattern background */}
+                <div className="w-full h-full grid-background z-[-10] fixed top-0 left-0 pointer-events-none area-hidden" />
+              </div>
             </ThemeProvider>
           </ConvexClientProvider>
         </body>
