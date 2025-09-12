@@ -24,6 +24,7 @@ import { Trash2 } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { CopyToClipboardButton } from "./CopyToClipboardButton";
 
 interface ListItem {
   _id: Id<"sortedLists">;
@@ -56,7 +57,6 @@ export function ListCard({ list }: ListCardProps) {
               <CardDescription>{list.description}</CardDescription>
             )}
           </div>
-          <AlertComponent handleDelete={handleDelete} />
         </div>
       </CardHeader>
       <CardContent>
@@ -73,10 +73,18 @@ export function ListCard({ list }: ListCardProps) {
             </li>
           ))}
         </ol>
-        <div className="flex justify-end mt-4">
+        <div className="flex mt-4 w-full justify-between items-center">
           <p className="text-xs text-muted-foreground">
             Updated: {formatRelativeTime(list.updatedAt)}
           </p>
+          <div className="flex items-center">
+            <CopyToClipboardButton
+              textToCopy={list.items.join("\n")}
+              variant="ghost"
+              size="icon"
+            />
+            <AlertComponent handleDelete={handleDelete} />
+          </div>
         </div>
       </CardContent>
     </Card>

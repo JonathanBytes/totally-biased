@@ -2,12 +2,11 @@
 
 import { Authenticated, Unauthenticated } from "convex/react";
 
-import { ClipboardCheck, ClipboardCopy } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";
-import { toast } from "sonner";
 import Link from "next/link";
 import SaveListDrawer from "./SaveListDrawer";
+import { CopyToClipboardButton } from "./CopyToClipboardButton";
 
 const ResultsPanel = ({
   className,
@@ -18,32 +17,23 @@ const ResultsPanel = ({
   list: string[];
   setList: (list: string[]) => void;
 }) => {
-  const [copied, setCopied] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  const onCopy = () => {
-    navigator.clipboard.writeText(list.join("\n"));
-    setCopied(true);
-    toast.success("Copied to clipboard!");
-
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
-  };
 
   return (
     <div
-      className={`${className} flex items-center flex-col max-w-2xl w-full md:min-w-[500px]`}
+      className={`${className} flex items-center flex-col max-w-2xl w-full md:min-w-[500px]}`}
     >
       <div className="flex justify-between w-full items-center flex-wrap gap-4">
         <h2 className="text-2xl text-left">
           Here is your <span className="font-bold">totally biased</span> list:
         </h2>
-        <Button onClick={onCopy} variant="outline" size="sm">
-          {copied
-            ? <ClipboardCheck className="size-4" />
-            : <ClipboardCopy className="size-4" />} Copy
-        </Button>
+        <CopyToClipboardButton
+          textToCopy={list.join("\n")}
+          buttonText="Copy"
+          variant="outline"
+          size="sm"
+          className="cursor-pointer bg-card/5 backdrop-blur-xs card"
+        />
       </div>
       <ol className="text-left w-full list-decimal list-inside my-4">
         {list.map((item, index) => <li key={index}>{item}</li>)}
@@ -88,3 +78,4 @@ const ResultsPanel = ({
 };
 
 export default ResultsPanel;
+
