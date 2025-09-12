@@ -37,7 +37,7 @@ export default function Home() {
       } catch (e) {
         console.error(
           "Failed to parse comparisonPanelState from localStorage",
-          e
+          e,
         );
         localStorage.removeItem("comparisonPanelState");
       }
