@@ -65,7 +65,7 @@ export function ListCard({ list }: ListCardProps) {
             <li key={index} className="flex items-center gap-2">
               <Badge
                 variant="outline"
-                className="flex h-6 w-6 items-center justify-center rounded-full p-0"
+                className="h-6 w-6 rounded-full p-0"
               >
                 {index + 1}
               </Badge>
