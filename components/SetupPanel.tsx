@@ -50,7 +50,6 @@ const SetupPanel: React.FC<SetupPanelProps> = (
     });
 
     const uniqueItems = Array.from(uniqueItemsMap.values());
-    console.log("Parsed items:", uniqueItems);
 
     if (uniqueItems.length < 2) {
       toast.error("Please provide at least two unique items to compare.");
