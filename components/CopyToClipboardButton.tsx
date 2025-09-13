@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import React from "react";
 import { ClipboardCheck, ClipboardCopy } from "lucide-react";
 import { toast } from "sonner";
-import { Button, type ButtonProps } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+
+type ButtonProps = React.ComponentProps<typeof Button>;
 
 interface CopyToClipboardButtonProps extends Omit<ButtonProps, "onClick"> {
   textToCopy: string;
