@@ -11,7 +11,7 @@ export function Footer() {
             href="https://jonathanbytes.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-primary underline-offset-4 hover:underline"
+            className="font-serif text-primary underline-offset-4 hover:underline"
           >
             JonathanBytes
           </Link>
