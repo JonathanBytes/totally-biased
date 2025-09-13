@@ -62,7 +62,7 @@ const SetupPanel: React.FC<SetupPanelProps> = (
 
   return (
     <div
-      className={`${className} flex items-center flex-col max-w-2xl h-screen`}
+      className={`${className} flex items-center flex-col max-w-2xl`}
     >
       <p className="text-left w-full">
         Totally biased is a{" "}
