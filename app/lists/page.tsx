@@ -47,9 +47,9 @@ function Content() {
           hideTrigger
         />
       )}
-      <ul className="flex flex-wrap gap-4 justify-center">
+      <ul className="flex flex-wrap gap-4 justify-center items-center max-w-5xl">
         {lists.map((list) => (
-          <li key={list._id} className="min-w-[300px] ">
+          <li key={list._id} className="min-w-[250px]">
             <ListCard list={list} />
           </li>
         ))}
