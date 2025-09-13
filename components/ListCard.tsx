@@ -52,7 +52,7 @@ export function ListCard({ list }: ListCardProps) {
       <CardHeader>
         <div className="flex justify-between items-center">
           <div>
-            <CardTitle className="text-xl font-bold">{list.title}</CardTitle>
+            <CardTitle className="text-xl font-serif">{list.title}</CardTitle>
             {list.description && (
               <CardDescription>{list.description}</CardDescription>
             )}
