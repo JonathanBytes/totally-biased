@@ -16,7 +16,7 @@ export default defineSchema({
     items: v.array(v.string()),
     // Last updated timestamp
     updatedAt: v.number(),
-  }),
+  }).index("by_userId", ["userId"]),
 
   // Table for in-progress comparison panel state
   comparisonPanelStates: defineTable({

@@ -37,7 +37,12 @@ const SaveListForm = ({
       closeDrawer();
     } catch (error) {
       console.error("Error saving list:", error);
-      toast.error("Failed to save list.");
+      const errorMessage = (error as Error).message;
+      if (errorMessage.includes("maximum of")) {
+        toast.error("You have reached the maximum number of saved lists.");
+      } else {
+        toast.error("Failed to save list. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }

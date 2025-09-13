@@ -14,6 +14,19 @@ export const create = mutation({
       throw new Error("Not authenticated");
     }
 
+    const userLists = await ctx.db
+      .query("sortedLists")
+      .withIndex("by_userId", (q) => q.eq("userId", identity.subject))
+      .collect();
+
+    const MAX_LISTS_PER_USER = 10;
+
+    if (userLists.length >= MAX_LISTS_PER_USER) {
+      throw new Error(
+        `You have reached the maximum of ${MAX_LISTS_PER_USER} saved lists.`,
+      );
+    }
+
     if (args.items.length > 100) {
       throw new Error("List cannot contain more than 100 items");
     }
@@ -56,7 +69,7 @@ export const getForCurrentUserByUpdatedAt = query({
     }
     const lists = await ctx.db
       .query("sortedLists")
-      .filter((q) => q.eq(q.field("userId"), identity.subject))
+      .withIndex("by_userId", (q) => q.eq("userId", identity.subject))
       .collect();
 
     // Sort by updatedAt descending (last updated first)
