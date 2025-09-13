@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export function Footer() {
   return (
-    <footer className="bg-background/50 border-t backdrop-blur-sm mt-4">
+    <footer className="bg-background/50 border-t backdrop-blur-sm mt-6">
       <div className="max-w-3xl container mx-auto flex items-center justify-between p-4 text-sm text-muted-foreground">
         <p>
           Built by{" "}
