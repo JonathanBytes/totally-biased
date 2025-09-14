@@ -25,6 +25,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { CopyToClipboardButton } from "./CopyToClipboardButton";
+import { ShareButton } from "./ShareButton";
 
 interface ListItem {
   _id: Id<"sortedLists">;
@@ -63,10 +64,7 @@ export function ListCard({ list }: ListCardProps) {
         <ol className="space-y-2">
           {list.items.map((item, index) => (
             <li key={index} className="flex items-center gap-2">
-              <Badge
-                variant="outline"
-                className="h-6 w-6 rounded-full p-0"
-              >
+              <Badge variant="outline" className="h-6 w-6 rounded-full p-0">
                 {index + 1}
               </Badge>
               <span className="text-md">{item}</span>
@@ -82,6 +80,11 @@ export function ListCard({ list }: ListCardProps) {
               textToCopy={list.items.join("\n")}
               variant="ghost"
               size="icon"
+            />
+            <ShareButton
+              items={list.items}
+              title={list.title}
+              className="text-primary"
             />
             <AlertComponent handleDelete={handleDelete} />
           </div>

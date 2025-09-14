@@ -26,6 +26,7 @@ export default function Home() {
     ComparisonPanelState | undefined
   >(undefined);
   const [isLoading, setIsLoading] = useState(true);
+  const [urlItems, setUrlItems] = useState<string[]>([]);
 
   useEffect(() => {
     const raw = localStorage.getItem("comparisonPanelState");
@@ -37,11 +38,29 @@ export default function Home() {
       } catch (e) {
         console.error(
           "Failed to parse comparisonPanelState from localStorage",
-          e,
+          e
         );
         localStorage.removeItem("comparisonPanelState");
       }
     }
+
+    // Check for URL parameters
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash;
+      if (hash.startsWith("#items=")) {
+        try {
+          const encodedItems = hash.substring(7); // Remove "#items="
+          const decodedItems = JSON.parse(decodeURIComponent(encodedItems));
+          if (Array.isArray(decodedItems) && decodedItems.length > 0) {
+            setUrlItems(decodedItems);
+            setList(decodedItems);
+          }
+        } catch (e) {
+          console.error("Failed to parse items from URL", e);
+        }
+      }
+    }
+
     setIsLoading(false);
   }, []);
 
@@ -75,8 +94,10 @@ export default function Home() {
         onRankingComplete={handleRankingComplete}
       />
     );
+  } else if (urlItems.length > 0) {
+    currentPanel = <SetupPanel setList={handleSetList} urlItems={urlItems} />;
   } else if (list.length === 0) {
-    currentPanel = <SetupPanel list={list} setList={handleSetList} />;
+    currentPanel = <SetupPanel setList={handleSetList} urlItems={urlItems} />;
   } else {
     currentPanel = (
       <ComparisonPanel

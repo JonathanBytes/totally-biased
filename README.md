@@ -86,6 +86,8 @@ Here are some of the features planned for the future to make **Totally Biased** 
   - [x] A "Copy to Clipboard" button to easily share your text-based list.
   - [x] A "Save to Account" button to persist your masterpiece.
   - [ ] A "Share" button to generate a public link.
+    - [ ] Share a link to sort your list
+    - [ ] Share the list as plain text
 - [ ] **Sharing & Social Features?**
   - [ ] Generate a public, shareable link for your completed rankings. So people with the link can view and try to sort that list by themselves.
 - [ ] **UI Improvements**
