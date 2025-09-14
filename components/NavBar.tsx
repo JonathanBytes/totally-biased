@@ -26,17 +26,12 @@ interface NavBarProps {
 const NavBar: React.FC<NavBarProps> = ({ className = "", onClick }) => {
   const pathname = usePathname();
   return (
-    <div
+    <nav
       className={`${className} flex flex-wrap items-center justify-between relative my-2 p-4 max-w-3xl w-full`}
       onClick={onClick}
     >
       <div className="flex items-center gap-3 flex-start">
-        <Link
-          href="/"
-          className="inline-flex"
-          aria-label="Go to home page"
-          role="navigation"
-        >
+        <Link href="/" className="inline-flex" aria-label="Go to home page">
           <Button
             variant="ghost"
             size="icon"
@@ -87,7 +82,7 @@ const NavBar: React.FC<NavBarProps> = ({ className = "", onClick }) => {
       <div className="flex-end">
         <ModeToggle />
       </div>
-    </div>
+    </nav>
   );
 };
 
