@@ -2,6 +2,7 @@
 
 import { Authenticated, Unauthenticated } from "convex/react";
 import { SignInButton, UserButton } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
 
 // import {
 //   NavigationMenu,
@@ -23,9 +24,10 @@ interface NavBarProps {
 }
 
 const NavBar: React.FC<NavBarProps> = ({ className = "", onClick }) => {
+  const pathname = usePathname();
   return (
     <div
-      className={`${className} flex flex-wrap items-center justify-between relative mt-2 p-4 max-w-3xl w-full`}
+      className={`${className} flex flex-wrap items-center justify-between relative my-2 p-4 max-w-3xl w-full`}
       onClick={onClick}
     >
       <div className="flex items-center gap-3 flex-start">
@@ -50,7 +52,15 @@ const NavBar: React.FC<NavBarProps> = ({ className = "", onClick }) => {
           <div className="flex items-center gap-4">
             <UserButton />
             <Link href="/lists">
-              <Button className="cursor-pointer" variant="outline" size="sm">
+              <Button
+                variant={pathname === "/lists" ? "outline" : "ghost"}
+                size="sm"
+                className={`cursor-pointer ${
+                  pathname === "/lists"
+                    ? "font-bold bg-card/5 backdrop-blur-xs card "
+                    : ""
+                }`}
+              >
                 <List className="size-4" />
                 My Lists
               </Button>

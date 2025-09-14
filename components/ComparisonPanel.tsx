@@ -36,12 +36,15 @@ const ComparisonPanel = ({
     <div
       className={`${className} flex items-center flex-col max-w-2xl w-full md:min-w-[500px]`}
     >
-      <h2 className="text-2xl text-left w-full">Which one do you prefer?</h2>
+      <h2 className="text-2xl text-left w-full font-serif">
+        Which one do you prefer?
+      </h2>
       <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 my-4">
         <div
           className="bg-purple-500 h-2.5 rounded-full transition-all duration-500"
           style={{ width: `${progress}%` }}
-        ></div>
+        >
+        </div>
       </div>
       <div className="flex justify-around w-full my-4">
         <Button

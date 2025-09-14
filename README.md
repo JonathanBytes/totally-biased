@@ -85,13 +85,11 @@ Here are some of the features planned for the future to make **Totally Biased** 
 - [ ] **Enhanced Results Screen**
   - [x] A "Copy to Clipboard" button to easily share your text-based list.
   - [x] A "Save to Account" button to persist your masterpiece.
+  - [ ] A "Share" button to generate a public link.
 - [ ] **Sharing & Social Features?**
-  - [ ] Generate a public, shareable link for your completed rankings.
-  - [ ] View aggregated "community rankings" for popular item sets.
-- [ ] **Richer Content**
-  - [ ] Add image URLs to items for a more visual comparison experience.
+  - [ ] Generate a public, shareable link for your completed rankings. So people with the link can view and try to sort that list by themselves.
 - [ ] **UI Improvements**
   - [ ] Enhance the ListCards layout using a bento grid approach to better handle cards with too much content.
-  - [ ] Fix the bug in the DrawerComponent where clicking multiple times quickly after the drawer disappears can save the list multiple times.
+  - [x] Fix the bug in the DrawerComponent where clicking multiple times quickly after the drawer disappears can save the list multiple times.
 
 Have an idea? Feel free to open an issue or contribute!

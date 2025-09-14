@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -8,6 +8,11 @@ export function cn(...inputs: ClassValue[]) {
 export function formatRelativeTime(timestamp: number): string {
   const now = Date.now();
   const diffInSeconds = Math.floor((now - timestamp) / 1000);
+
+  // Prevent negative or future timestamps
+  if (diffInSeconds < 0) {
+    return "just now";
+  }
 
   // Less than 1 minute: show seconds
   if (diffInSeconds < 60) {

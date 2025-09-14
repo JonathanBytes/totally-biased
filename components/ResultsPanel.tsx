@@ -2,12 +2,11 @@
 
 import { Authenticated, Unauthenticated } from "convex/react";
 
-import { ClipboardCheck, ClipboardCopy } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";
-import { toast } from "sonner";
 import Link from "next/link";
 import SaveListDrawer from "./SaveListDrawer";
+import { CopyToClipboardButton } from "./CopyToClipboardButton";
 
 const ResultsPanel = ({
   className,
@@ -18,48 +17,54 @@ const ResultsPanel = ({
   list: string[];
   setList: (list: string[]) => void;
 }) => {
-  const [copied, setCopied] = useState(false);
-
-  const onCopy = () => {
-    navigator.clipboard.writeText(list.join("\n"));
-    setCopied(true);
-    toast.success("Copied to clipboard!");
-
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
-  };
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
     <div
-      className={`${className} flex items-center flex-col max-w-2xl w-full md:min-w-[500px]`}
+      className={`${className} flex items-center flex-col max-w-2xl w-full md:min-w-[500px]}`}
     >
       <div className="flex justify-between w-full items-center flex-wrap gap-4">
         <h2 className="text-2xl text-left">
           Here is your <span className="font-bold">totally biased</span> list:
         </h2>
-        <Button onClick={onCopy} variant="outline" size="sm">
-          {copied ? (
-            <ClipboardCheck className="size-4" />
-          ) : (
-            <ClipboardCopy className="size-4" />
-          )}{" "}
-          Copy
-        </Button>
+        <CopyToClipboardButton
+          textToCopy={list.join("\n")}
+          buttonText="Copy"
+          variant="outline"
+          size="sm"
+          className="cursor-pointer bg-card/5 backdrop-blur-xs card"
+        />
       </div>
       <ol className="text-left w-full list-decimal list-inside my-4">
-        {list.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
+        {list.map((item, index) => <li key={index}>{item}</li>)}
       </ol>
       <div className="flex gap-4 w-full justify-end">
         <Authenticated>
-          <SaveListDrawer list={list} />
+          <SaveListDrawer
+            list={list}
+            isOpen={isDrawerOpen}
+            onClose={() => {
+              setIsDrawerOpen(false);
+            }}
+            hideTrigger
+          />
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setIsDrawerOpen(true)}
+          >
+            Save list to your account
+          </Button>
         </Authenticated>
         <Unauthenticated>
-          {/* This should store the list while the user logs in or signs up, currently deletes the list*/}
-          <Link href="/login">
-            <Button variant="secondary" size="sm">
+          <Link href="/sign-in?redirect_url=/lists">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                localStorage.setItem("unsavedList", JSON.stringify(list));
+              }}
+            >
               Save list to your account
             </Button>
           </Link>
@@ -73,3 +78,4 @@ const ResultsPanel = ({
 };
 
 export default ResultsPanel;
+

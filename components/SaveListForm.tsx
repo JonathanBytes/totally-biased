@@ -18,10 +18,12 @@ const SaveListForm = ({
 }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const createList = useMutation(api.sortedLists.create);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       await createList({
         title,
@@ -31,10 +33,18 @@ const SaveListForm = ({
       setTitle("");
       setDescription("");
       toast.success("List saved successfully!");
+      localStorage.removeItem("unsavedList");
       closeDrawer();
     } catch (error) {
       console.error("Error saving list:", error);
-      toast.error("Failed to save list.");
+      const errorMessage = (error as Error).message;
+      if (errorMessage.includes("maximum of")) {
+        toast.error("You have reached the maximum number of saved lists.");
+      } else {
+        toast.error("Failed to save list. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -60,8 +70,8 @@ const SaveListForm = ({
           className="min-h-[100px]"
         />
       </div>
-      <Button type="submit" className="w-full">
-        Save List
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? "Saving..." : "Save List"}
       </Button>
     </form>
   );

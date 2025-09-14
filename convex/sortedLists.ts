@@ -14,6 +14,19 @@ export const create = mutation({
       throw new Error("Not authenticated");
     }
 
+    const userLists = await ctx.db
+      .query("sortedLists")
+      .withIndex("by_userId", (q) => q.eq("userId", identity.subject))
+      .collect();
+
+    const MAX_LISTS_PER_USER = 10;
+
+    if (userLists.length >= MAX_LISTS_PER_USER) {
+      throw new Error(
+        `You have reached the maximum of ${MAX_LISTS_PER_USER} saved lists.`,
+      );
+    }
+
     if (args.items.length > 100) {
       throw new Error("List cannot contain more than 100 items");
     }
@@ -56,10 +69,33 @@ export const getForCurrentUserByUpdatedAt = query({
     }
     const lists = await ctx.db
       .query("sortedLists")
-      .filter((q) => q.eq(q.field("userId"), identity.subject))
+      .withIndex("by_userId", (q) => q.eq("userId", identity.subject))
       .collect();
 
     // Sort by updatedAt descending (last updated first)
     return lists.sort((a, b) => b.updatedAt - a.updatedAt);
+  },
+});
+
+// Delete a sorted list
+export const deleteList = mutation({
+  args: { id: v.id("sortedLists") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
+    const list = await ctx.db.get(args.id);
+
+    if (list === null) {
+      throw new Error("List not found");
+    }
+
+    if (list.userId !== identity.subject) {
+      throw new Error("Not authorized to delete this list");
+    }
+
+    await ctx.db.delete(args.id);
   },
 });
