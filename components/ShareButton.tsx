@@ -151,7 +151,10 @@ export function ShareButton({
           <Share2 className="size-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent
+        align="end"
+        className="card backdrop-blur-[2px] bg-popover/50"
+      >
         <DropdownMenuItem onClick={handleShareForSorting}>
           <Users className="size-4 mr-2" />
           Share for others to sort
