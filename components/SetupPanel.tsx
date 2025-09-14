@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
-import { CornerDownLeft } from "lucide-react";
+import { CornerDownLeft, X } from "lucide-react";
 
 interface SetupPanelProps {
   className?: string;
@@ -36,6 +36,10 @@ const SetupPanel: React.FC<SetupPanelProps> = ({
   function handleTextareaChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
     const input = event.target.value;
     setInputValue(input);
+  }
+
+  function handleClearContent() {
+    setInputValue("");
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -90,10 +94,10 @@ const SetupPanel: React.FC<SetupPanelProps> = ({
         <Label htmlFor="item-list" className="mb-2">
           Type your list to rank
         </Label>
-        <div className="card aria-hidden mb-2 backdrop-blur-[2px] rounded-md">
+        <div className="card aria-hidden mb-2 backdrop-blur-[2px] rounded-md relative">
           <Textarea
             ref={textareaRef}
-            className="rounded-md resize-none overflow-hidden"
+            className="rounded-md resize-none overflow-hidden pr-10"
             id="item-list"
             placeholder={`Apple, Banana, Orange`}
             value={inputValue}
@@ -101,6 +105,17 @@ const SetupPanel: React.FC<SetupPanelProps> = ({
             onKeyDown={handleKeyDown}
             autoFocus
           />
+          {inputValue && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 h-6 w-6 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+              onClick={handleClearContent}
+              title="Clear content"
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          )}
         </div>
         <div className="flex justify-end items-center gap-2">
           <p className="text-sm text-neutral-500">Ctrl + Enter</p>
