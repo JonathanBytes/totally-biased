@@ -10,6 +10,7 @@ import NavBar from "@/components/NavBar";
 import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://rank.jonathanbytes.com"),
   title: "Totally biased",
   description:
     "A subjective sort app to rank by taste, bias, and gut instinct.",
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
     title: "Totally biased",
     description:
       "A subjective sort app to rank by taste, bias, and gut instinct.",
-    url: "https://totally-biased.com",
+    url: "https://rank.jonathanbytes.com",
     siteName: "Totally biased",
     type: "website",
     locale: "en_US",
