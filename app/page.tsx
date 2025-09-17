@@ -29,21 +29,6 @@ export default function Home() {
   const [urlItems, setUrlItems] = useState<string[]>([]);
 
   useEffect(() => {
-    const raw = localStorage.getItem("comparisonPanelState");
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw) as ComparisonPanelState;
-        setUnfinishedComparison(parsed);
-        setList(parsed.items);
-      } catch (e) {
-        console.error(
-          "Failed to parse comparisonPanelState from localStorage",
-          e
-        );
-        localStorage.removeItem("comparisonPanelState");
-      }
-    }
-
     // Check for URL parameters
     if (typeof window !== "undefined") {
       const hash = window.location.hash;
@@ -67,8 +52,9 @@ export default function Home() {
           ) {
             if (decodedData.items.length > 0) {
               setUrlItems(decodedData.items);
-              setList(decodedData.items);
+              //setList(decodedData.items);
               if (decodedData.ranked) {
+                setList(decodedData.items);
                 setIsRanked(true);
               }
             }
@@ -79,11 +65,28 @@ export default function Home() {
       }
     }
 
+    // Check localStorage for unfinished comparison on mount
+    const raw = localStorage.getItem("comparisonPanelState");
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw) as ComparisonPanelState;
+        setUnfinishedComparison(parsed);
+        setList(parsed.items);
+      } catch (e) {
+        console.error(
+          "Failed to parse comparisonPanelState from localStorage",
+          e
+        );
+        localStorage.removeItem("comparisonPanelState");
+      }
+    }
+
     setIsLoading(false);
   }, []);
 
   const handleSetList = (newList: string[]) => {
     setList(newList);
+    setUrlItems([]);
     setIsRanked(false);
     setUnfinishedComparison(undefined);
     localStorage.removeItem("comparisonPanelState");
