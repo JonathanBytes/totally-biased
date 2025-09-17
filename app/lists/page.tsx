@@ -5,10 +5,17 @@ import { api } from "../../convex/_generated/api";
 import { Authenticated, useQuery } from "convex/react";
 import { useEffect, useState } from "react";
 import SaveListDrawer from "@/components/SaveListDrawer";
+import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 
 const ListPage = () => {
+  const breadcrumbItems = [
+    { name: "Home", url: "https://rank.jonathanbytes.com" },
+    { name: "My Lists" },
+  ];
+
   return (
     <div>
+      <BreadcrumbSchema items={breadcrumbItems} />
       <Authenticated>
         <Content />
       </Authenticated>

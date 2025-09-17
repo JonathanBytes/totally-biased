@@ -8,6 +8,8 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import NavBar from "@/components/NavBar";
 import { Footer } from "@/components/Footer";
+import { JsonLd } from "@/components/JsonLd";
+import { WithContext, WebApplication, Organization } from "schema-dts";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://rank.jonathanbytes.com"),
@@ -51,12 +53,45 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // JSON-LD structured data for the web application
+  const webAppSchema: WithContext<WebApplication> = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "Totally biased",
+    url: "https://rank.jonathanbytes.com",
+    description:
+      "A subjective sort app to rank by taste, bias, and gut instinct.",
+    applicationCategory: "UtilitiesApplication",
+    operatingSystem: "Any",
+    browserRequirements: "Requires JavaScript. Requires HTML5.",
+    author: {
+      "@type": "Person",
+      name: "Jonathan Bytes",
+      url: "https://jonathanbytes.com",
+    },
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+  };
+
+  const organizationSchema: WithContext<Organization> = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Jonathan Bytes",
+    url: "https://jonathanbytes.com",
+    sameAs: ["https://twitter.com/JonathanBytes"],
+  };
+
   return (
     <ClerkProvider appearance={{ baseTheme: shadcn }}>
       <html lang="en" suppressHydrationWarning>
         <body
           className={`${inter.variable} ${ibm.variable} ${yeseva.variable} font-sans antialiased`}
         >
+          <JsonLd data={webAppSchema} id="webapp-schema" />
+          <JsonLd data={organizationSchema} id="organization-schema" />
           <ConvexClientProvider>
             <ThemeProvider
               attribute="class"
