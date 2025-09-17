@@ -16,6 +16,33 @@ export const metadata: Metadata = {
   appleWebApp: {
     title: "Totally biased",
   },
+  openGraph: {
+    title: "Totally biased",
+    description:
+      "A subjective sort app to rank by taste, bias, and gut instinct.",
+    url: "https://totally-biased.com",
+    siteName: "Totally biased",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Totally biased",
+    description:
+      "A subjective sort app to rank by taste, bias, and gut instinct.",
+    creator: "@JonathanBytes",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
