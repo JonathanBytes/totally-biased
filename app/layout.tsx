@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   title: "Totally biased",
   description:
     "A subjective sort app to rank by taste, bias, and gut instinct.",
+  appleWebApp: {
+    title: "Totally biased",
+  },
 };
 
 export default function RootLayout({
