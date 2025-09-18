@@ -5,19 +5,19 @@ export const useComparison = (
   list: string[],
   setList: (list: string[]) => void,
   onRankingComplete: (rankedList: string[]) => void,
-  unfinishedState?: ComparisonPanelState,
+  unfinishedState?: ComparisonPanelState
 ) => {
   const [items, setItems] = useState(
-    unfinishedState ? unfinishedState.items : [...list],
+    unfinishedState ? unfinishedState.items : [...list]
   );
   const [currentIndex, setCurrentIndex] = useState(
-    unfinishedState ? unfinishedState.currentIndex : 1,
+    unfinishedState ? unfinishedState.currentIndex : 1
   );
   const [comparisonIndex, setComparisonIndex] = useState(
-    unfinishedState ? unfinishedState.comparisonIndex : 0,
+    unfinishedState ? unfinishedState.comparisonIndex : 0
   );
   const [history, setHistory] = useState<HistoryItem[]>(
-    unfinishedState ? unfinishedState.history : [],
+    unfinishedState ? unfinishedState.history : []
   );
 
   useEffect(() => {
@@ -46,7 +46,7 @@ export const useComparison = (
     } else {
       setItems(newItems);
       setCurrentIndex(currentIndex + 1);
-      setComparisonIndex(currentIndex);
+      setComparisonIndex(currentIndex - 1);
     }
   };
 
