@@ -1,0 +1,23 @@
+{
+  "navigation": {
+    "home": "首页",
+    "myLists": "我的列表",
+    "signIn": "登录"
+  },
+  "common": {
+    "language": "语言",
+    "english": "英语",
+    "spanish": "西班牙语",
+    "french": "法语",
+    "german": "德语",
+    "italian": "意大利语",
+    "portuguese": "葡萄牙语",
+    "japanese": "日语",
+    "korean": "韩语",
+    "chinese": "中文"
+  },
+  "app": {
+    "title": "完全有偏见",
+    "description": "一个主观排序应用，按照品味、偏见和直觉进行排名。"
+  }
+}

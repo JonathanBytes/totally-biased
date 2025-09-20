@@ -1,0 +1,23 @@
+{
+  "navigation": {
+    "home": "Início",
+    "myLists": "Minhas Listas",
+    "signIn": "Entrar"
+  },
+  "common": {
+    "language": "Idioma",
+    "english": "Inglês",
+    "spanish": "Espanhol",
+    "french": "Francês",
+    "german": "Alemão",
+    "italian": "Italiano",
+    "portuguese": "Português",
+    "japanese": "Japonês",
+    "korean": "Coreano",
+    "chinese": "Chinês"
+  },
+  "app": {
+    "title": "Totalmente tendencioso",
+    "description": "Um aplicativo de classificação subjetiva para ordenar por gosto, preconceito e instinto."
+  }
+}
