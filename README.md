@@ -99,6 +99,7 @@ Paris, Tokyo, New York City, Bali, London, Rome, Barcelona, Sydney, Santorini, D
 Here are some of the features planned for the future to make **Totally Biased** even better!
 
 - [ ] **User Accounts & Database Integration**
+  - [ ] Add a way to test the saving features without login for showcasing
   - [ ] Save unfinished comparisons to your account so you can continue them later on any device.
   - [x] Save completed rankings to your account.
   - [x] A dedicated page to view all your saved rankings.
@@ -110,6 +111,7 @@ Here are some of the features planned for the future to make **Totally Biased** 
     - [x] Share the list as plain text.
 - [x] **Sharing & Social Features?**
   - [x] Generate a public, shareable link for your completed rankings. So people with the link can view and try to sort that list by themselves.
+  - [ ] Merge the share options to only share a ranked link, and add a button to "do this list by myself" or "Try to sort"
 - [ ] **UI Improvements**
   - [ ] Enhance the ListCards layout using a bento grid approach to better handle cards with too much content.
   - [x] Tinder like animation for the cards in the ComparisonPanel.
