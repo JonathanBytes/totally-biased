@@ -116,5 +116,6 @@ Here are some of the features planned for the future to make **Totally Biased** 
   - [ ] Enhance the ListCards layout using a bento grid approach to better handle cards with too much content.
   - [x] Tinder like animation for the cards in the ComparisonPanel.
   - [x] Fix the bug in the DrawerComponent where clicking multiple times quickly after the drawer disappears can save the list multiple times.
+- [ ] add basic and advance list, advanced list can have dates and checklists for marking as completed can be shared between accounts (limited amount of basic/advanced lists and limited shared account).
 
 Have an idea? Feel free to open an issue or contribute!
