@@ -36,7 +36,7 @@ const SaveListDrawer = ({
           <DrawerHeader>
             <DrawerTitle>Save Your List</DrawerTitle>
             <DrawerDescription>
-              Save your ranked list to access it later.
+              Save your ranked list and choose between basic (view-only) or advanced (interactive checklist).
             </DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pb-0">

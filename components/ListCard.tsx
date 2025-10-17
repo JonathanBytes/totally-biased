@@ -20,12 +20,20 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, ArrowUpCircle } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { CopyToClipboardButton } from "./CopyToClipboardButton";
 import { ShareButton } from "./ShareButton";
+import { AdvancedListCard } from "./AdvancedListCard";
+import type { AdvancedListItem } from "./AdvancedListCard";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ListItem {
   _id: Id<"sortedLists">;
@@ -33,6 +41,13 @@ interface ListItem {
   title: string;
   description?: string | undefined;
   items: string[];
+  listType?: "basic" | "advanced" | undefined;
+  completedItems?: number[] | undefined;
+  itemDates?:
+    | {
+        [key: string]: number;
+      }
+    | undefined;
   updatedAt: number;
   userId: string;
 }
@@ -43,21 +58,86 @@ interface ListCardProps {
 
 export function ListCard({ list }: ListCardProps) {
   const deleteList = useMutation(api.sortedLists.deleteList);
+  const convertToAdvanced = useMutation(api.sortedLists.convertToAdvanced);
 
   const handleDelete = () => {
     deleteList({ id: list._id });
   };
 
+  const handleConvertToAdvanced = async () => {
+    try {
+      await convertToAdvanced({ id: list._id });
+    } catch (error) {
+      console.error("Error converting to advanced:", error);
+    }
+  };
+
+  // Default to "basic" if listType is not set (for backwards compatibility)
+  const effectiveListType = list.listType || "basic";
+
+  // Render advanced list if listType is advanced
+  if (effectiveListType === "advanced") {
+    return (
+      <AdvancedListCard
+        list={list as AdvancedListItem}
+        handleDelete={handleDelete}
+      />
+    );
+  }
+
+  // Render basic list
+  return (
+    <BasicListCard
+      list={list}
+      handleDelete={handleDelete}
+      handleConvertToAdvanced={handleConvertToAdvanced}
+    />
+  );
+}
+
+interface BasicListCardProps {
+  list: ListItem;
+  handleDelete: MouseEventHandler<HTMLButtonElement>;
+  handleConvertToAdvanced: () => void;
+}
+
+function BasicListCard({
+  list,
+  handleDelete,
+  handleConvertToAdvanced,
+}: BasicListCardProps) {
   return (
     <Card className="w-full hover:shadow-md transition-shadow duration-300 bg-card/5 backdrop-blur-[2px] card">
       <CardHeader>
         <div className="flex justify-between items-center">
-          <div>
-            <CardTitle className="text-xl font-serif">{list.title}</CardTitle>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-xl font-serif">{list.title}</CardTitle>
+              <Badge variant="outline" className="text-xs">
+                Basic
+              </Badge>
+            </div>
             {list.description && (
               <CardDescription>{list.description}</CardDescription>
             )}
           </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleConvertToAdvanced}
+                  className="text-primary"
+                >
+                  <ArrowUpCircle className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Upgrade to Advanced List</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </CardHeader>
       <CardContent>
@@ -75,7 +155,7 @@ export function ListCard({ list }: ListCardProps) {
           <p className="text-xs text-muted-foreground">
             Updated: {formatRelativeTime(list.updatedAt)}
           </p>
-          <div className="flex items-center">
+          <div className="flex items-center ml-1 gap-1">
             <CopyToClipboardButton
               textToCopy={list.items.join("\n")}
               variant="ghost"
@@ -93,8 +173,6 @@ export function ListCard({ list }: ListCardProps) {
     </Card>
   );
 }
-
-export default ListCard;
 
 interface AlertComponentProps {
   handleDelete: MouseEventHandler<HTMLButtonElement>;
@@ -130,3 +208,5 @@ const AlertComponent = ({ handleDelete }: AlertComponentProps) => {
     </AlertDialog>
   );
 };
+
+export default ListCard;

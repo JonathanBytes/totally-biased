@@ -26,7 +26,7 @@ const ListPage = () => {
 export default ListPage;
 
 function Content() {
-  const lists = useQuery(api.sortedLists.getForCurrentUserByUpdatedAt);
+  const lists = useQuery(api.sortedLists.getForCurrentUser);
   const [unsavedList, setUnsavedList] = useState<string[] | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -56,7 +56,7 @@ function Content() {
       )}
       <ul className="flex flex-wrap gap-4 justify-center items-center max-w-5xl">
         {lists.map((list) => (
-          <li key={list._id} className="min-w-[250px]">
+          <li key={list._id} className="min-w-[300px]">
             <ListCard list={list} />
           </li>
         ))}

@@ -7,6 +7,7 @@ export const create = mutation({
     title: v.string(),
     description: v.optional(v.string()),
     items: v.array(v.string()),
+    listType: v.union(v.literal("basic"), v.literal("advanced")),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -36,6 +37,9 @@ export const create = mutation({
       title: args.title,
       description: args.description,
       items: args.items,
+      listType: args.listType,
+      completedItems: args.listType === "advanced" ? [] : undefined,
+      itemDates: args.listType === "advanced" ? {} : undefined,
       updatedAt: Date.now(),
     });
   },
@@ -97,5 +101,212 @@ export const deleteList = mutation({
     }
 
     await ctx.db.delete(args.id);
+  },
+});
+
+// Convert a basic list to advanced
+export const convertToAdvanced = mutation({
+  args: { id: v.id("sortedLists") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
+    const list = await ctx.db.get(args.id);
+
+    if (list === null) {
+      throw new Error("List not found");
+    }
+
+    if (list.userId !== identity.subject) {
+      throw new Error("Not authorized to modify this list");
+    }
+
+    if (list.listType === "advanced") {
+      throw new Error("List is already advanced");
+    }
+
+    await ctx.db.patch(args.id, {
+      listType: "advanced",
+      completedItems: [],
+      itemDates: {},
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+// Toggle item completion (advanced lists only)
+export const toggleItemCompletion = mutation({
+  args: {
+    id: v.id("sortedLists"),
+    itemIndex: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
+    const list = await ctx.db.get(args.id);
+
+    if (list === null) {
+      throw new Error("List not found");
+    }
+
+    if (list.userId !== identity.subject) {
+      throw new Error("Not authorized to modify this list");
+    }
+
+    if (list.listType !== "advanced") {
+      throw new Error("Only advanced lists support completion tracking");
+    }
+
+    const completedItems = list.completedItems || [];
+    const index = completedItems.indexOf(args.itemIndex);
+
+    if (index > -1) {
+      // Item is completed, remove it
+      completedItems.splice(index, 1);
+    } else {
+      // Item is not completed, add it
+      completedItems.push(args.itemIndex);
+    }
+
+    await ctx.db.patch(args.id, {
+      completedItems,
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+// Update item date (advanced lists only)
+export const updateItemDate = mutation({
+  args: {
+    id: v.id("sortedLists"),
+    itemIndex: v.number(),
+    date: v.optional(v.number()), // timestamp, undefined to remove
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
+    const list = await ctx.db.get(args.id);
+
+    if (list === null) {
+      throw new Error("List not found");
+    }
+
+    if (list.userId !== identity.subject) {
+      throw new Error("Not authorized to modify this list");
+    }
+
+    if (list.listType !== "advanced") {
+      throw new Error("Only advanced lists support dates");
+    }
+
+    const itemDates = (list.itemDates as Record<string, number>) || {};
+
+    if (args.date === undefined) {
+      // Remove the date
+      delete itemDates[args.itemIndex.toString()];
+    } else {
+      // Set or update the date
+      itemDates[args.itemIndex.toString()] = args.date;
+    }
+
+    await ctx.db.patch(args.id, {
+      itemDates: itemDates,
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+// Reorder items (advanced lists only)
+export const reorderItems = mutation({
+  args: {
+    id: v.id("sortedLists"),
+    newOrder: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
+    const list = await ctx.db.get(args.id);
+
+    if (list === null) {
+      throw new Error("List not found");
+    }
+
+    if (list.userId !== identity.subject) {
+      throw new Error("Not authorized to modify this list");
+    }
+
+    if (list.listType !== "advanced") {
+      throw new Error("Only advanced lists support reordering");
+    }
+
+    if (args.newOrder.length !== list.items.length) {
+      throw new Error("New order must contain all items");
+    }
+
+    // Verify all items are present
+    const oldItemsSet = new Set(list.items);
+    const newItemsSet = new Set(args.newOrder);
+    if (oldItemsSet.size !== newItemsSet.size) {
+      throw new Error("Items mismatch");
+    }
+    for (const item of args.newOrder) {
+      if (!oldItemsSet.has(item)) {
+        throw new Error("Items mismatch");
+      }
+    }
+
+    // Remap completedItems and itemDates to match new order
+    const newCompletedItems: number[] = [];
+    const newItemDates: Record<string, number> = {};
+
+    // Create a mapping from old item to old index
+    const oldItemToIndex = new Map<string, number>();
+    list.items.forEach((item, index) => {
+      oldItemToIndex.set(item, index);
+    });
+
+    // For each item in the new order, check if it was completed or had a date
+    args.newOrder.forEach((item, newIndex) => {
+      const oldIndex = oldItemToIndex.get(item);
+      if (oldIndex !== undefined) {
+        // Check if this item was completed at its old position
+        if (list.completedItems?.includes(oldIndex)) {
+          newCompletedItems.push(newIndex);
+          console.log(`Item "${item}" was completed at old index ${oldIndex}, now at ${newIndex}`);
+        }
+        // Check if this item had a date at its old position
+        const itemDatesObj = list.itemDates as Record<string, number> | undefined;
+        const oldDate = itemDatesObj?.[oldIndex.toString()];
+        if (oldDate !== undefined) {
+          newItemDates[newIndex.toString()] = oldDate;
+          console.log(`Item "${item}" had date at old index ${oldIndex}, now at ${newIndex}`);
+        }
+      }
+    });
+
+    console.log('Old items:', list.items);
+    console.log('New items:', args.newOrder);
+    console.log('Old completedItems:', list.completedItems);
+    console.log('New completedItems:', newCompletedItems);
+    console.log('Old itemDates:', list.itemDates);
+    console.log('New itemDates:', newItemDates);
+
+    await ctx.db.patch(args.id, {
+      items: args.newOrder,
+      completedItems: newCompletedItems,
+      itemDates: newItemDates,
+      updatedAt: Date.now(),
+    });
   },
 });
