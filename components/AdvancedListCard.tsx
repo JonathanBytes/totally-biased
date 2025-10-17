@@ -9,7 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { formatRelativeTime } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Check, Calendar as CalendarIcon, X } from "lucide-react";
+import { Check, Calendar as CalendarIcon, X, GripVertical } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -34,6 +34,25 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 interface AdvancedListItem {
   _id: Id<"sortedLists">;
@@ -60,6 +79,7 @@ interface AdvancedListCardProps {
 }
 
 interface ItemProps {
+  id: string;
   item: string;
   index: number;
   completed: boolean;
@@ -70,7 +90,8 @@ interface ItemProps {
   setOpenDatePickerId: (id: number | null) => void;
 }
 
-function ListItem({
+function SortableItem({
+  id,
   item,
   index,
   completed,
@@ -80,12 +101,42 @@ function ListItem({
   openDatePickerId,
   setOpenDatePickerId,
 }: ItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   const formatDate = (date: Date) => {
     return format(date, "MMM d, yyyy");
   };
 
   return (
-    <div className="flex items-center gap-2 p-2 rounded hover:bg-muted/50 transition-colors w-full">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center gap-2 p-2 rounded hover:bg-muted/50 transition-colors w-full"
+    >
+      <button
+        ref={setActivatorNodeRef}
+        {...listeners}
+        {...attributes}
+        className="cursor-grab active:cursor-grabbing touch-none p-1 -m-1 flex-shrink-0"
+        aria-label="Drag to reorder"
+        style={{ touchAction: 'none' }}
+      >
+        <GripVertical className="h-5 w-5 text-muted-foreground" />
+      </button>
       <button
         onClick={() => onToggleCompletion(index)}
         className={`h-5 w-5 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
@@ -161,11 +212,59 @@ export function AdvancedListCard({
   handleDelete,
 }: AdvancedListCardProps) {
   const [openDatePickerId, setOpenDatePickerId] = useState<number | null>(null);
+  // Optimistic state for instant UI updates
+  const [optimisticItems, setOptimisticItems] = useState<string[]>(list.items);
 
   const toggleItemCompletion = useMutation(
     api.sortedLists.toggleItemCompletion
   );
   const updateItemDate = useMutation(api.sortedLists.updateItemDate);
+  const reorderItems = useMutation(api.sortedLists.reorderItems);
+
+  // Sensors configured for optimal mobile performance
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Require 8px movement before activating
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200, // 200ms press delay for scrolling
+        tolerance: 8, // 8px movement tolerance during delay
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Sync optimistic state when list.items changes from server
+  React.useEffect(() => {
+    setOptimisticItems(list.items);
+  }, [list.items]);
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = optimisticItems.indexOf(active.id as string);
+      const newIndex = optimisticItems.indexOf(over.id as string);
+
+      // Optimistic update: Update UI immediately
+      const newItems = arrayMove(optimisticItems, oldIndex, newIndex);
+      setOptimisticItems(newItems);
+
+      // Then sync with database
+      try {
+        await reorderItems({ id: list._id, newOrder: newItems });
+      } catch (error) {
+        console.error("Error reordering items:", error);
+        // Revert on error
+        setOptimisticItems(list.items);
+      }
+    }
+  };
 
   const handleToggleCompletion = async (itemIndex: number) => {
     try {
@@ -208,7 +307,7 @@ export function AdvancedListCard({
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow duration-300 bg-card/5 backdrop-blur-[2px] card">
+    <Card className="w-full hover:shadow-md transition-shadow duration-300 bg-card/5 backdrop-blur-[2px] card">
       <CardHeader>
         <div className="flex justify-between items-center">
           <div className="flex-1">
@@ -225,21 +324,38 @@ export function AdvancedListCard({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-2 w-full">
-          {list.items.map((item, index) => (
-            <ListItem
-              key={index}
-              item={item}
-              index={index}
-              completed={isItemCompleted(index)}
-              itemDate={getItemDate(index)}
-              onToggleCompletion={handleToggleCompletion}
-              onDateSelect={handleDateSelect}
-              openDatePickerId={openDatePickerId}
-              setOpenDatePickerId={setOpenDatePickerId}
-            />
-          ))}
-        </div>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+          modifiers={[restrictToVerticalAxis]}
+        >
+          <SortableContext
+            items={optimisticItems}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-2 w-full">
+              {optimisticItems.map((item) => {
+                // Find the original index for completion/date state
+                const originalIndex = list.items.indexOf(item);
+                return (
+                  <SortableItem
+                    key={item}
+                    id={item}
+                    item={item}
+                    index={originalIndex}
+                    completed={isItemCompleted(originalIndex)}
+                    itemDate={getItemDate(originalIndex)}
+                    onToggleCompletion={handleToggleCompletion}
+                    onDateSelect={handleDateSelect}
+                    openDatePickerId={openDatePickerId}
+                    setOpenDatePickerId={setOpenDatePickerId}
+                  />
+                );
+              })}
+            </div>
+          </SortableContext>
+        </DndContext>
         <div className="flex mt-4 w-full justify-between items-center">
           <p className="text-xs text-muted-foreground">
             Updated: {formatRelativeTime(list.updatedAt)}
