@@ -9,7 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { formatRelativeTime } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Check, Calendar as CalendarIcon, GripVertical, X } from "lucide-react";
+import { Check, Calendar as CalendarIcon, X } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -28,31 +28,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Trash2 } from "lucide-react";
 import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 interface AdvancedListItem {
   _id: Id<"sortedLists">;
@@ -78,11 +59,9 @@ interface AdvancedListCardProps {
   handleDelete: MouseEventHandler<HTMLButtonElement>;
 }
 
-interface SortableItemProps {
-  id: string;
+interface ItemProps {
   item: string;
   index: number;
-  visualIndex: number;
   completed: boolean;
   itemDate: Date | null;
   onToggleCompletion: (index: number) => void;
@@ -91,45 +70,22 @@ interface SortableItemProps {
   setOpenDatePickerId: (id: number | null) => void;
 }
 
-function SortableItem({
-  id,
+function ListItem({
   item,
   index,
-  visualIndex,
   completed,
   itemDate,
   onToggleCompletion,
   onDateSelect,
   openDatePickerId,
   setOpenDatePickerId,
-}: SortableItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
+}: ItemProps) {
   const formatDate = (date: Date) => {
     return format(date, "MMM d, yyyy");
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="flex items-center gap-2 p-2 rounded hover:bg-muted/50 transition-colors"
-    >
-      <button
-        {...listeners}
-        {...attributes}
-        className="cursor-grab active:cursor-grabbing touch-none p-2 -m-2 flex-shrink-0"
-        aria-label="Drag to reorder"
-        style={{ touchAction: 'none' }}
-      >
-        <GripVertical className="h-5 w-5 text-muted-foreground" />
-      </button>
+    <div className="flex items-center gap-2 p-2 rounded hover:bg-muted/50 transition-colors w-full">
       <button
         onClick={() => onToggleCompletion(index)}
         className={`h-5 w-5 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
@@ -142,10 +98,10 @@ function SortableItem({
         {completed && <Check className="h-3 w-3" />}
       </button>
       <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex-shrink-0">
-        {visualIndex + 1}
+        {index + 1}
       </Badge>
-      <div className="flex-1 min-w-0 overflow-hidden">
-        <div className="flex items-start gap-2 flex-wrap break-words">
+      <div className="flex-1 overflow-hidden">
+        <div className="flex items-center gap-2 flex-wrap break-words">
           <span
             className={`text-md break-words ${
               completed ? "line-through text-muted-foreground" : ""
@@ -210,47 +166,12 @@ export function AdvancedListCard({
     api.sortedLists.toggleItemCompletion
   );
   const updateItemDate = useMutation(api.sortedLists.updateItemDate);
-  const reorderItems = useMutation(api.sortedLists.reorderItems);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 5,
-      },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 150,
-        tolerance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
 
   const handleToggleCompletion = async (itemIndex: number) => {
     try {
       await toggleItemCompletion({ id: list._id, itemIndex });
     } catch (error) {
       console.error("Error toggling completion:", error);
-    }
-  };
-
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      const oldIndex = list.items.indexOf(active.id as string);
-      const newIndex = list.items.indexOf(over.id as string);
-
-      const newItems = arrayMove(list.items, oldIndex, newIndex);
-
-      try {
-        await reorderItems({ id: list._id, newOrder: newItems });
-      } catch (error) {
-        console.error("Error reordering items:", error);
-      }
     }
   };
 
@@ -304,32 +225,21 @@ export function AdvancedListCard({
         </div>
       </CardHeader>
       <CardContent>
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-          modifiers={[restrictToVerticalAxis]}
-        >
-          <SortableContext items={list.items} strategy={verticalListSortingStrategy}>
-            <div className="space-y-2 w-full">
-              {list.items.map((item, index) => (
-                <SortableItem
-                  key={item}
-                  id={item}
-                  item={item}
-                  index={index}
-                  visualIndex={index}
-                  completed={isItemCompleted(index)}
-                  itemDate={getItemDate(index)}
-                  onToggleCompletion={handleToggleCompletion}
-                  onDateSelect={handleDateSelect}
-                  openDatePickerId={openDatePickerId}
-                  setOpenDatePickerId={setOpenDatePickerId}
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
+        <div className="space-y-2 w-full">
+          {list.items.map((item, index) => (
+            <ListItem
+              key={index}
+              item={item}
+              index={index}
+              completed={isItemCompleted(index)}
+              itemDate={getItemDate(index)}
+              onToggleCompletion={handleToggleCompletion}
+              onDateSelect={handleDateSelect}
+              openDatePickerId={openDatePickerId}
+              setOpenDatePickerId={setOpenDatePickerId}
+            />
+          ))}
+        </div>
         <div className="flex mt-4 w-full justify-between items-center">
           <p className="text-xs text-muted-foreground">
             Updated: {formatRelativeTime(list.updatedAt)}
