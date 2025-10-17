@@ -310,3 +310,53 @@ export const reorderItems = mutation({
     });
   },
 });
+
+// Remove an item from a list
+export const removeItem = mutation({
+  args: { id: v.id("sortedLists"), itemIndex: v.number() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
+    const list = await ctx.db.get(args.id);
+
+    if (list === null) {
+      throw new Error("List not found");
+    }
+
+    if (list.userId !== identity.subject) {
+      throw new Error("Not authorized to modify this list");
+    }
+
+    // Remove the item at the specified index
+    const newItems = list.items.filter((_, index) => index !== args.itemIndex);
+
+    // Update completedItems: remove the index and adjust remaining indices
+    const newCompletedItems = (list.completedItems || [])
+      .filter(index => index !== args.itemIndex)
+      .map(index => index > args.itemIndex ? index - 1 : index);
+
+    // Update itemDates: remove the date and adjust remaining indices
+    const oldItemDates = list.itemDates as Record<string, number> | undefined;
+    const newItemDates: Record<string, number> = {};
+    
+    if (oldItemDates) {
+      Object.entries(oldItemDates).forEach(([indexStr, date]) => {
+        const index = parseInt(indexStr);
+        if (index !== args.itemIndex) {
+          const newIndex = index > args.itemIndex ? index - 1 : index;
+          newItemDates[newIndex.toString()] = date;
+        }
+      });
+    }
+
+    await ctx.db.patch(args.id, {
+      items: newItems,
+      completedItems: newCompletedItems,
+      itemDates: newItemDates,
+      updatedAt: Date.now(),
+    });
+  },
+});
