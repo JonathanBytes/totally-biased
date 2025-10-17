@@ -9,7 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { formatRelativeTime } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Check, Calendar as CalendarIcon, X, GripVertical, Pencil, Trash2 as TrashIcon } from "lucide-react";
+import { Check, CalendarPlus as CalendarIcon, GripVertical, Pencil, Trash2 as TrashIcon, CalendarX2 } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -211,7 +211,7 @@ function SortableItem({
 
       {/* Modo Editar: Botones de fecha y eliminar */}
       {isEditMode && (
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
           {itemDate && (
             <Button
               variant="ghost"
@@ -220,7 +220,7 @@ function SortableItem({
               onClick={() => onDateSelect(index, undefined)}
               title="Remove date"
             >
-              <X className="h-3 w-3" />
+              <CalendarX2 className="h-3 w-3" />
             </Button>
           )}
           <Popover
@@ -230,11 +230,11 @@ function SortableItem({
             <PopoverTrigger asChild>
               <Button
                 variant="ghost"
-                size="sm"
-                className={`h-7 px-2 ${itemDate ? "text-primary" : ""}`}
+                size="icon"
+                className={`h-7 w-7 p-0 ${itemDate ? "text-primary" : ""}`}
                 title={itemDate ? "Change date" : "Add date"}
               >
-                <CalendarIcon className="h-4 w-4" />
+                <CalendarIcon className="h-3 w-3" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="end">
