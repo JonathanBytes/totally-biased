@@ -111,7 +111,7 @@ Here are some of the features planned for the future to make **Totally Biased** 
     - [x] Share the list as plain text.
 - [x] **Sharing & Social Features?**
   - [x] Generate a public, shareable link for your completed rankings. So people with the link can view and try to sort that list by themselves.
-  - [ ] Merge the share options to only share a ranked link, and add a button to "do this list by myself" or "Try to sort"
+  - [x] Merge the share options to only share a ranked link, and add a button to "do this list by myself" or "Try to sort"
 - [ ] **UI Improvements**
   - [ ] Enhance the ListCards layout using a bento grid approach to better handle cards with too much content.
   - [x] Tinder like animation for the cards in the ComparisonPanel.
