@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Share2, Users, Trophy, FileText } from "lucide-react";
+import { Share2, Trophy, FileText } from "lucide-react";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -13,14 +13,12 @@ import {
 
 interface ShareButtonProps {
   items: string[];
-  originalItems?: string[]; // Unsorted list for sharing to others
   title?: string;
   className?: string;
 }
 
 export function ShareButton({
   items,
-  originalItems,
   title = "Totally Biased List",
   className,
 }: ShareButtonProps) {
@@ -73,14 +71,6 @@ export function ShareButton({
       // Fallback to clipboard if Web Share API is not available or data is not shareable
       await copyToClipboard(shareUrl);
     }
-  };
-
-  const handleShareForSorting = () => {
-    const itemsToShare = originalItems || items;
-    const shareText = originalItems
-      ? "Try sorting this list yourself with Totally Biased!"
-      : "Try re-sorting this ranked list with Totally Biased!";
-    handleShare(itemsToShare, false, shareText);
   };
 
   const handleShareRanked = () => {
@@ -155,13 +145,9 @@ export function ShareButton({
         align="end"
         className="card backdrop-blur-[2px] bg-popover/50"
       >
-        <DropdownMenuItem onClick={handleShareForSorting}>
-          <Users className="size-4 mr-2" />
-          Share for others to sort
-        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleShareRanked}>
           <Trophy className="size-4 mr-2" />
-          Share ranked results
+          Share ranked list
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSharePlainText}>
           <FileText className="size-4 mr-2" />

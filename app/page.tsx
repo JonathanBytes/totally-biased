@@ -22,6 +22,7 @@ export default function Home() {
 
   const [list, setList] = useState<string[]>([]);
   const [isRanked, setIsRanked] = useState(false);
+  const [isSharedRankedList, setIsSharedRankedList] = useState(false);
   const [unfinishedComparison, setUnfinishedComparison] = useState<
     ComparisonPanelState | undefined
   >(undefined);
@@ -56,6 +57,7 @@ export default function Home() {
               if (decodedData.ranked) {
                 setList(decodedData.items);
                 setIsRanked(true);
+                setIsSharedRankedList(true);
               }
             }
           }
@@ -88,6 +90,7 @@ export default function Home() {
     setList(newList);
     setUrlItems([]);
     setIsRanked(false);
+    setIsSharedRankedList(false);
     setUnfinishedComparison(undefined);
     localStorage.removeItem("comparisonPanelState");
   };
@@ -95,8 +98,16 @@ export default function Home() {
   const handleRankingComplete = (rankedList: string[]) => {
     setList(rankedList);
     setIsRanked(true);
+    setIsSharedRankedList(false);
     setUnfinishedComparison(undefined);
     localStorage.removeItem("comparisonPanelState");
+  };
+
+  const handleStartRankingSharedList = () => {
+    // Keep the items but allow user to rank them
+    setIsRanked(false);
+    setIsSharedRankedList(false);
+    // The list items are already set, just need to start comparison
   };
 
   if (isLoading) {
@@ -105,7 +116,14 @@ export default function Home() {
 
   let currentPanel;
   if (isRanked) {
-    currentPanel = <ResultsPanel list={list} setList={handleSetList} />;
+    currentPanel = (
+      <ResultsPanel
+        list={list}
+        setList={handleSetList}
+        isSharedRankedList={isSharedRankedList}
+        onStartRanking={handleStartRankingSharedList}
+      />
+    );
   } else if (unfinishedComparison) {
     currentPanel = (
       <ComparisonPanel
