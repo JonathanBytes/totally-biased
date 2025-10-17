@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useState } from "react";
+import React, { MouseEventHandler, useState, useEffect, useCallback, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -9,7 +9,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { formatRelativeTime } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Check, CalendarPlus as CalendarIcon, GripVertical, Pencil, Trash2 as TrashIcon, CalendarX2 } from "lucide-react";
+import {
+  Check,
+  CalendarPlus as CalendarIcon,
+  GripVertical,
+  Pencil,
+  Trash2 as TrashIcon,
+  CalendarX2,
+  Trash2,
+} from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -26,7 +34,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2 } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -92,7 +99,13 @@ interface ItemProps {
   setOpenDatePickerId: (id: number | null) => void;
 }
 
-function SortableItem({
+// Utility function for date formatting
+const formatItemDate = (date: Date): string => {
+  return format(date, "MMM d, yyyy");
+};
+
+// Memoized SortableItem component for better performance
+const SortableItem = React.memo<ItemProps>(function SortableItem({
   id,
   item,
   index,
@@ -104,7 +117,7 @@ function SortableItem({
   onRemoveItem,
   openDatePickerId,
   setOpenDatePickerId,
-}: ItemProps) {
+}) {
   const {
     attributes,
     listeners,
@@ -115,15 +128,40 @@ function SortableItem({
     isDragging,
   } = useSortable({ id });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
+  const style = useMemo(
+    () => ({
+      transform: CSS.Transform.toString(transform),
+      transition,
+      opacity: isDragging ? 0.5 : 1,
+    }),
+    [transform, transition, isDragging]
+  );
 
-  const formatDate = (date: Date) => {
-    return format(date, "MMM d, yyyy");
-  };
+  const handleToggle = useCallback(() => {
+    onToggleCompletion(index);
+  }, [onToggleCompletion, index]);
+
+  const handleDateRemove = useCallback(() => {
+    onDateSelect(index, undefined);
+  }, [onDateSelect, index]);
+
+  const handleRemove = useCallback(() => {
+    onRemoveItem(index);
+  }, [onRemoveItem, index]);
+
+  const handleDateChange = useCallback(
+    (date: Date | undefined) => {
+      onDateSelect(index, date);
+    },
+    [onDateSelect, index]
+  );
+
+  const handlePopoverChange = useCallback(
+    (open: boolean) => {
+      setOpenDatePickerId(open ? index : null);
+    },
+    [setOpenDatePickerId, index]
+  );
 
   return (
     <div
@@ -131,7 +169,7 @@ function SortableItem({
       style={style}
       className="flex items-center gap-2 p-2 rounded hover:bg-muted/50 transition-colors w-full"
     >
-      {/* Modo Editar: Handle */}
+      {/* Edit Mode: Drag Handle */}
       {isEditMode && (
         <button
           ref={setActivatorNodeRef}
@@ -139,16 +177,16 @@ function SortableItem({
           {...attributes}
           className="cursor-grab active:cursor-grabbing touch-none p-1 -m-1 flex-shrink-0"
           aria-label="Drag to reorder"
-          style={{ touchAction: 'none' }}
+          style={{ touchAction: "none" }}
         >
           <GripVertical className="h-5 w-5 text-muted-foreground" />
         </button>
       )}
 
-      {/* Modo Normal: Checkbox */}
+      {/* Normal Mode: Checkbox */}
       {!isEditMode && (
         <button
-          onClick={() => onToggleCompletion(index)}
+          onClick={handleToggle}
           className={`h-5 w-5 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
             completed
               ? "bg-primary border-primary text-primary-foreground"
@@ -160,9 +198,13 @@ function SortableItem({
         </button>
       )}
 
-      <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex-shrink-0">
+      <Badge
+        variant="outline"
+        className="h-6 w-6 rounded-full p-0 flex-shrink-0"
+      >
         {index + 1}
       </Badge>
+
       <div className="flex-1 overflow-hidden">
         <div className="flex items-center gap-2 flex-wrap break-words">
           <span
@@ -174,19 +216,16 @@ function SortableItem({
           </span>
           {itemDate && (
             <span className="text-xs text-muted-foreground flex items-center gap-1">
-            {formatDate(itemDate)}
+              {formatItemDate(itemDate)}
             </span>
           )}
         </div>
       </div>
 
-      {/* Modo Normal: Botones de fecha */}
+      {/* Normal Mode: Date Button */}
       {!isEditMode && (
         <div className="flex items-center gap-1">
-          <Popover
-            open={openDatePickerId === index}
-            onOpenChange={(open) => setOpenDatePickerId(open ? index : null)}
-          >
+          <Popover open={openDatePickerId === index} onOpenChange={handlePopoverChange}>
             <PopoverTrigger asChild>
               <Button
                 variant="ghost"
@@ -201,7 +240,7 @@ function SortableItem({
               <Calendar
                 mode="single"
                 selected={itemDate || undefined}
-                onSelect={(date) => onDateSelect(index, date)}
+                onSelect={handleDateChange}
                 initialFocus
               />
             </PopoverContent>
@@ -209,7 +248,7 @@ function SortableItem({
         </div>
       )}
 
-      {/* Modo Editar: Botones de fecha y eliminar */}
+      {/* Edit Mode: Date and Delete Buttons */}
       {isEditMode && (
         <div className="flex items-center gap-0.5">
           {itemDate && (
@@ -217,16 +256,13 @@ function SortableItem({
               variant="ghost"
               size="sm"
               className="h-7 w-7 p-0"
-              onClick={() => onDateSelect(index, undefined)}
+              onClick={handleDateRemove}
               title="Remove date"
             >
               <CalendarX2 className="h-3 w-3" />
             </Button>
           )}
-          <Popover
-            open={openDatePickerId === index}
-            onOpenChange={(open) => setOpenDatePickerId(open ? index : null)}
-          >
+          <Popover open={openDatePickerId === index} onOpenChange={handlePopoverChange}>
             <PopoverTrigger asChild>
               <Button
                 variant="ghost"
@@ -241,7 +277,7 @@ function SortableItem({
               <Calendar
                 mode="single"
                 selected={itemDate || undefined}
-                onSelect={(date) => onDateSelect(index, date)}
+                onSelect={handleDateChange}
                 initialFocus
               />
             </PopoverContent>
@@ -250,7 +286,7 @@ function SortableItem({
             variant="ghost"
             size="sm"
             className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-            onClick={() => onRemoveItem(index)}
+            onClick={handleRemove}
             title="Delete item"
           >
             <TrashIcon className="h-4 w-4" />
@@ -259,7 +295,7 @@ function SortableItem({
       )}
     </div>
   );
-}
+});
 
 export function AdvancedListCard({
   list,
@@ -267,12 +303,13 @@ export function AdvancedListCard({
 }: AdvancedListCardProps) {
   const [openDatePickerId, setOpenDatePickerId] = useState<number | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
-  // Optimistic state for instant UI updates
   const [optimisticItems, setOptimisticItems] = useState<string[]>(list.items);
-
-  const toggleItemCompletion = useMutation(
-    api.sortedLists.toggleItemCompletion
+  const [optimisticCompletedItems, setOptimisticCompletedItems] = useState<number[]>(
+    list.completedItems || []
   );
+
+  // Mutations
+  const toggleItemCompletion = useMutation(api.sortedLists.toggleItemCompletion);
   const updateItemDate = useMutation(api.sortedLists.updateItemDate);
   const reorderItems = useMutation(api.sortedLists.reorderItems);
   const removeItem = useMutation(api.sortedLists.removeItem);
@@ -281,13 +318,13 @@ export function AdvancedListCard({
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8, // Require 8px movement before activating
+        distance: 8,
       },
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 200, // 200ms press delay for scrolling
-        tolerance: 8, // 8px movement tolerance during delay
+        delay: 200,
+        tolerance: 8,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -296,89 +333,150 @@ export function AdvancedListCard({
   );
 
   // Sync optimistic state when list.items changes from server
-  React.useEffect(() => {
+  useEffect(() => {
     setOptimisticItems(list.items);
   }, [list.items]);
 
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event;
+  // Sync optimistic completed items when list.completedItems changes from server
+  useEffect(() => {
+    setOptimisticCompletedItems(list.completedItems || []);
+  }, [list.completedItems]);
 
-    if (over && active.id !== over.id) {
-      const oldIndex = optimisticItems.indexOf(active.id as string);
-      const newIndex = optimisticItems.indexOf(over.id as string);
+  // Memoized handlers for better performance
+  const handleDragEnd = useCallback(
+    async (event: DragEndEvent) => {
+      const { active, over } = event;
 
-      // Optimistic update: Update UI immediately
-      const newItems = arrayMove(optimisticItems, oldIndex, newIndex);
-      setOptimisticItems(newItems);
+      if (over && active.id !== over.id) {
+        const oldIndex = optimisticItems.indexOf(active.id as string);
+        const newIndex = optimisticItems.indexOf(over.id as string);
 
-      // Then sync with database
+        // Optimistic update
+        const newItems = arrayMove(optimisticItems, oldIndex, newIndex);
+        setOptimisticItems(newItems);
+
+        try {
+          await reorderItems({ id: list._id, newOrder: newItems });
+        } catch (error) {
+          console.error("Error reordering items:", error);
+          setOptimisticItems(list.items);
+        }
+      }
+    },
+    [optimisticItems, list._id, list.items, reorderItems]
+  );
+
+  const handleToggleCompletion = useCallback(
+    async (itemIndex: number) => {
+      // Optimistic update: Toggle completion immediately in UI
+      const isCurrentlyCompleted = optimisticCompletedItems.includes(itemIndex);
+      const newCompletedItems = isCurrentlyCompleted
+        ? optimisticCompletedItems.filter((idx) => idx !== itemIndex)
+        : [...optimisticCompletedItems, itemIndex];
+      
+      setOptimisticCompletedItems(newCompletedItems);
+
       try {
-        await reorderItems({ id: list._id, newOrder: newItems });
+        await toggleItemCompletion({ id: list._id, itemIndex });
       } catch (error) {
-        console.error("Error reordering items:", error);
+        console.error("Error toggling completion:", error);
         // Revert on error
+        setOptimisticCompletedItems(list.completedItems || []);
+      }
+    },
+    [list._id, optimisticCompletedItems, list.completedItems, toggleItemCompletion]
+  );
+
+  const handleDateSelect = useCallback(
+    async (itemIndex: number, date: Date | undefined) => {
+      try {
+        await updateItemDate({
+          id: list._id,
+          itemIndex,
+          date: date ? date.getTime() : undefined,
+        });
+        setOpenDatePickerId(null);
+      } catch (error) {
+        console.error("Error updating date:", error);
+      }
+    },
+    [list._id, updateItemDate]
+  );
+
+  const handleRemoveItem = useCallback(
+    async (itemIndex: number) => {
+      try {
+        // Optimistic update
+        const newItems = optimisticItems.filter((_, index) => {
+          const originalIndex = list.items.indexOf(optimisticItems[index]);
+          return originalIndex !== itemIndex;
+        });
+        setOptimisticItems(newItems);
+
+        await removeItem({ id: list._id, itemIndex });
+      } catch (error) {
+        console.error("Error removing item:", error);
         setOptimisticItems(list.items);
       }
-    }
-  };
+    },
+    [optimisticItems, list.items, list._id, removeItem]
+  );
 
-  const handleToggleCompletion = async (itemIndex: number) => {
-    try {
-      await toggleItemCompletion({ id: list._id, itemIndex });
-    } catch (error) {
-      console.error("Error toggling completion:", error);
-    }
-  };
+  const toggleEditMode = useCallback(() => {
+    setIsEditMode((prev) => !prev);
+  }, []);
 
-  const handleDateSelect = async (itemIndex: number, date: Date | undefined) => {
-    try {
-      if (date) {
-        await updateItemDate({
-          id: list._id,
-          itemIndex,
-          date: date.getTime(),
-        });
-      } else {
-        // Remove date
-        await updateItemDate({
-          id: list._id,
-          itemIndex,
-          date: undefined,
-        });
-      }
-      setOpenDatePickerId(null);
-    } catch (error) {
-      console.error("Error updating date:", error);
-    }
-  };
+  // Helper functions
+  const isItemCompleted = useCallback(
+    (index: number) => {
+      return optimisticCompletedItems.includes(index);
+    },
+    [optimisticCompletedItems]
+  );
 
-  const handleRemoveItem = async (itemIndex: number) => {
-    try {
-      // Optimistic update: remove item from local state immediately
-      const newItems = optimisticItems.filter((_, index) => {
-        const originalIndex = list.items.indexOf(optimisticItems[index]);
-        return originalIndex !== itemIndex;
-      });
-      setOptimisticItems(newItems);
+  const getItemDate = useCallback(
+    (index: number) => {
+      const dateTimestamp = list.itemDates?.[index.toString()];
+      if (!dateTimestamp) return null;
+      return new Date(dateTimestamp);
+    },
+    [list.itemDates]
+  );
 
-      // Sync with database
-      await removeItem({ id: list._id, itemIndex });
-    } catch (error) {
-      console.error("Error removing item:", error);
-      // Revert on error
-      setOptimisticItems(list.items);
-    }
-  };
-
-  const isItemCompleted = (index: number) => {
-    return list.completedItems?.includes(index) || false;
-  };
-
-  const getItemDate = (index: number) => {
-    const dateTimestamp = list.itemDates?.[index.toString()];
-    if (!dateTimestamp) return null;
-    return new Date(dateTimestamp);
-  };
+  // Render list items
+  const renderItems = useMemo(
+    () =>
+      optimisticItems.map((item) => {
+        const originalIndex = list.items.indexOf(item);
+        return (
+          <SortableItem
+            key={item}
+            id={item}
+            item={item}
+            index={originalIndex}
+            completed={isItemCompleted(originalIndex)}
+            itemDate={getItemDate(originalIndex)}
+            isEditMode={isEditMode}
+            onToggleCompletion={handleToggleCompletion}
+            onDateSelect={handleDateSelect}
+            onRemoveItem={handleRemoveItem}
+            openDatePickerId={openDatePickerId}
+            setOpenDatePickerId={setOpenDatePickerId}
+          />
+        );
+      }),
+    [
+      optimisticItems,
+      list.items,
+      isEditMode,
+      isItemCompleted,
+      getItemDate,
+      handleToggleCompletion,
+      handleDateSelect,
+      handleRemoveItem,
+      openDatePickerId,
+    ]
+  );
 
   return (
     <Card className="w-full hover:shadow-md transition-shadow duration-300 bg-card/5 backdrop-blur-[2px] card">
@@ -398,7 +496,7 @@ export function AdvancedListCard({
           <Button
             variant={isEditMode ? "default" : "outline"}
             size="sm"
-            onClick={() => setIsEditMode(!isEditMode)}
+            onClick={toggleEditMode}
             className="ml-2"
           >
             <Pencil className="h-4 w-4 mr-1" />
@@ -418,53 +516,11 @@ export function AdvancedListCard({
               items={optimisticItems}
               strategy={verticalListSortingStrategy}
             >
-              <div className="space-y-2 w-full">
-                {optimisticItems.map((item) => {
-                  // Find the original index for completion/date state
-                  const originalIndex = list.items.indexOf(item);
-                  return (
-                    <SortableItem
-                      key={item}
-                      id={item}
-                      item={item}
-                      index={originalIndex}
-                      completed={isItemCompleted(originalIndex)}
-                      itemDate={getItemDate(originalIndex)}
-                      isEditMode={isEditMode}
-                      onToggleCompletion={handleToggleCompletion}
-                      onDateSelect={handleDateSelect}
-                      onRemoveItem={handleRemoveItem}
-                      openDatePickerId={openDatePickerId}
-                      setOpenDatePickerId={setOpenDatePickerId}
-                    />
-                  );
-                })}
-              </div>
+              <div className="space-y-2 w-full">{renderItems}</div>
             </SortableContext>
           </DndContext>
         ) : (
-          <div className="space-y-2 w-full">
-            {optimisticItems.map((item) => {
-              // Find the original index for completion/date state
-              const originalIndex = list.items.indexOf(item);
-              return (
-                <SortableItem
-                  key={item}
-                  id={item}
-                  item={item}
-                  index={originalIndex}
-                  completed={isItemCompleted(originalIndex)}
-                  itemDate={getItemDate(originalIndex)}
-                  isEditMode={isEditMode}
-                  onToggleCompletion={handleToggleCompletion}
-                  onDateSelect={handleDateSelect}
-                  onRemoveItem={handleRemoveItem}
-                  openDatePickerId={openDatePickerId}
-                  setOpenDatePickerId={setOpenDatePickerId}
-                />
-              );
-            })}
-          </div>
+          <div className="space-y-2 w-full">{renderItems}</div>
         )}
         <div className="flex mt-4 w-full justify-between items-center">
           <p className="text-xs text-muted-foreground">
