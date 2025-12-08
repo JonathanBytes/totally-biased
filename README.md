@@ -13,12 +13,16 @@
 
 ---
 
-## 🚀 Features
+## Features
 
 - **Simple Interface:** Just paste your list and start comparing.
-- **Interactive Ranking:** Decide between two items at a time to build your ranking.
-- **Final Results:** Get a clear, ordered list of your favorites from best to worst.
-- **Reset and Go Again:** Easily start over with a new list.
+- **Interactive Ranking:** Decide between two items at a time to build your ranking with smooth animations.
+- **User Accounts & Persistence:** Save your completed rankings to your account and view all saved rankings on a dedicated page.
+- **Enhanced Results Screen:**
+  - Copy your ranked list to clipboard for easy sharing
+  - Save rankings to your account
+  - Generate shareable public links
+- **Sharing & Social Features:** Share links that let others sort your list themselves, or share as plain text.
 
 ---
 
@@ -35,12 +39,6 @@
 ## 🏁 Getting Started
 
 To get a local copy up and running, follow these simple steps.
-
-### Prerequisites
-
-- npm
-
-### Installation
 
 1. Clone the repo
 
@@ -60,16 +58,38 @@ To get a local copy up and running, follow these simple steps.
    npm run dev
    ```
 
-Now, open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
+## 📝 Example Lists
 
-### Example Lists
+Get started with these sample lists, or use them as inspiration to create your own! Simply copy and paste any of these into the app to begin ranking.
+
+### 🍎 Fruits
 
 ```
 Apple, Banana, Orange, Strawberry, Grape, Watermelon, Lemon, Cherry, Peach, Pear, Blueberry, Pineapple, Mango, Kiwi, Plum, Avocado, Coconut
 ```
 
+### 🎬 Classic Movies
+
 ```
 The Shawshank Redemption, The Godfather, The Dark Knight, Pulp Fiction, Forrest Gump, Inception, The Matrix, Fight Club, The Lord of the Rings: The Return of the King, Interstellar, Gladiator, The Lion King, Titanic, Jurassic Park, Star Wars: Episode IV - A New Hope
+```
+
+### 🍕 Comfort Foods
+
+```
+Pizza, Burgers, Tacos, Pasta, Ice Cream, Chocolate, French Fries, Grilled Cheese, Mac and Cheese, Fried Chicken, Donuts, Brownies, Cookies, Pancakes, Ramen
+```
+
+### 🎵 Music Genres
+
+```
+Rock, Pop, Hip Hop, Jazz, Classical, Electronic, Country, R&B, Reggae, Blues, Folk, Punk, Metal, Indie, Alternative
+```
+
+### 🏖️ Vacation Destinations
+
+```
+Paris, Tokyo, New York City, Bali, London, Rome, Barcelona, Sydney, Santorini, Dubai, Iceland, Maldives, Hawaii, Amsterdam, Prague
 ```
 
 ---
@@ -79,17 +99,23 @@ The Shawshank Redemption, The Godfather, The Dark Knight, Pulp Fiction, Forrest 
 Here are some of the features planned for the future to make **Totally Biased** even better!
 
 - [ ] **User Accounts & Database Integration**
+  - [ ] Add a way to test the saving features without login for showcasing
   - [ ] Save unfinished comparisons to your account so you can continue them later on any device.
   - [x] Save completed rankings to your account.
   - [x] A dedicated page to view all your saved rankings.
-- [ ] **Enhanced Results Screen**
+- [x] **Enhanced Results Screen**
   - [x] A "Copy to Clipboard" button to easily share your text-based list.
   - [x] A "Save to Account" button to persist your masterpiece.
-  - [ ] A "Share" button to generate a public link.
-- [ ] **Sharing & Social Features?**
-  - [ ] Generate a public, shareable link for your completed rankings. So people with the link can view and try to sort that list by themselves.
+  - [x] A "Share" button to generate a public link.
+    - [x] Share a link to sort your list.
+    - [x] Share the list as plain text.
+- [x] **Sharing & Social Features?**
+  - [x] Generate a public, shareable link for your completed rankings. So people with the link can view and try to sort that list by themselves.
+  - [x] Merge the share options to only share a ranked link, and add a button to "do this list by myself" or "Try to sort"
 - [ ] **UI Improvements**
   - [ ] Enhance the ListCards layout using a bento grid approach to better handle cards with too much content.
+  - [x] Tinder like animation for the cards in the ComparisonPanel.
   - [x] Fix the bug in the DrawerComponent where clicking multiple times quickly after the drawer disappears can save the list multiple times.
+- [ ] add basic and advance list, advanced list can have dates and checklists for marking as completed can be shared between accounts (limited amount of basic/advanced lists and limited shared account).
 
 Have an idea? Feel free to open an issue or contribute!

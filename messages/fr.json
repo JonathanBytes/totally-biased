@@ -1,0 +1,23 @@
+{
+  "navigation": {
+    "home": "Accueil",
+    "myLists": "Mes Listes",
+    "signIn": "Se Connecter"
+  },
+  "common": {
+    "language": "Langue",
+    "english": "Anglais",
+    "spanish": "Espagnol",
+    "french": "Français",
+    "german": "Allemand",
+    "italian": "Italien",
+    "portuguese": "Portugais",
+    "japanese": "Japonais",
+    "korean": "Coréen",
+    "chinese": "Chinois"
+  },
+  "app": {
+    "title": "Totalement biaisé",
+    "description": "Une application de tri subjective pour classer selon le goût, les préjugés et l'instinct."
+  }
+}

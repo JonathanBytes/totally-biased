@@ -3,6 +3,8 @@
 import { Button } from "./ui/button";
 import { useComparison } from "@/lib/hooks/useComparison";
 import { ComparisonPanelState } from "@/lib/types";
+import { AnimatePresence } from "framer-motion";
+import ComparisonButton from "./ComparisonButton";
 
 const ComparisonPanel = ({
   className,
@@ -43,22 +45,29 @@ const ComparisonPanel = ({
         <div
           className="bg-purple-500 h-2.5 rounded-full transition-all duration-500"
           style={{ width: `${progress}%` }}
-        >
-        </div>
+        ></div>
       </div>
       <div className="flex justify-around w-full my-4">
-        <Button
-          onClick={() => handleChoice("itemToInsert")}
-          className="w-2/5 h-24 text-xl whitespace-normal break-words"
-        >
-          {itemToInsert}
-        </Button>
-        <Button
-          onClick={() => handleChoice("comparisonItem")}
-          className="w-2/5 h-24 text-xl whitespace-normal break-words"
-        >
-          {comparisonItem}
-        </Button>
+        <AnimatePresence mode="wait">
+          <ComparisonButton
+            key={itemToInsert}
+            onClick={() => handleChoice("itemToInsert")}
+            itemKey={itemToInsert}
+            direction="left"
+          >
+            {itemToInsert}
+          </ComparisonButton>
+        </AnimatePresence>
+        <AnimatePresence mode="wait">
+          <ComparisonButton
+            key={comparisonItem}
+            onClick={() => handleChoice("comparisonItem")}
+            itemKey={comparisonItem}
+            direction="right"
+          >
+            {comparisonItem}
+          </ComparisonButton>
+        </AnimatePresence>
       </div>
       <p className="text-left w-full">
         Sorted items: {items.slice(0, currentIndex).join(", ")}

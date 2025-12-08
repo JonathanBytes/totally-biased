@@ -22,12 +22,52 @@ export default function Home() {
 
   const [list, setList] = useState<string[]>([]);
   const [isRanked, setIsRanked] = useState(false);
+  const [isSharedRankedList, setIsSharedRankedList] = useState(false);
   const [unfinishedComparison, setUnfinishedComparison] = useState<
     ComparisonPanelState | undefined
   >(undefined);
   const [isLoading, setIsLoading] = useState(true);
+  const [urlItems, setUrlItems] = useState<string[]>([]);
 
   useEffect(() => {
+    // Check for URL parameters
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash;
+      // Support new shorter format (#i=)
+      if (hash.startsWith("#i=")) {
+        try {
+          const encodedItems = hash.substring(3); // Remove "#i="
+          // Convert URL-safe Base64 back to regular Base64
+          const base64 = encodedItems.replace(/-/g, "+").replace(/_/g, "/");
+          // Add padding if needed
+          const paddedBase64 =
+            base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+          const jsonString = atob(paddedBase64);
+          const decodedData = JSON.parse(jsonString);
+
+          // Handle format with ranked flag
+          if (
+            typeof decodedData === "object" &&
+            decodedData.items &&
+            Array.isArray(decodedData.items)
+          ) {
+            if (decodedData.items.length > 0) {
+              setUrlItems(decodedData.items);
+              //setList(decodedData.items);
+              if (decodedData.ranked) {
+                setList(decodedData.items);
+                setIsRanked(true);
+                setIsSharedRankedList(true);
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Failed to parse items from URL", e);
+        }
+      }
+    }
+
+    // Check localStorage for unfinished comparison on mount
     const raw = localStorage.getItem("comparisonPanelState");
     if (raw) {
       try {
@@ -37,17 +77,20 @@ export default function Home() {
       } catch (e) {
         console.error(
           "Failed to parse comparisonPanelState from localStorage",
-          e,
+          e
         );
         localStorage.removeItem("comparisonPanelState");
       }
     }
+
     setIsLoading(false);
   }, []);
 
   const handleSetList = (newList: string[]) => {
     setList(newList);
+    setUrlItems([]);
     setIsRanked(false);
+    setIsSharedRankedList(false);
     setUnfinishedComparison(undefined);
     localStorage.removeItem("comparisonPanelState");
   };
@@ -55,8 +98,16 @@ export default function Home() {
   const handleRankingComplete = (rankedList: string[]) => {
     setList(rankedList);
     setIsRanked(true);
+    setIsSharedRankedList(false);
     setUnfinishedComparison(undefined);
     localStorage.removeItem("comparisonPanelState");
+  };
+
+  const handleStartRankingSharedList = () => {
+    // Keep the items but allow user to rank them
+    setIsRanked(false);
+    setIsSharedRankedList(false);
+    // The list items are already set, just need to start comparison
   };
 
   if (isLoading) {
@@ -65,7 +116,14 @@ export default function Home() {
 
   let currentPanel;
   if (isRanked) {
-    currentPanel = <ResultsPanel list={list} setList={handleSetList} />;
+    currentPanel = (
+      <ResultsPanel
+        list={list}
+        setList={handleSetList}
+        isSharedRankedList={isSharedRankedList}
+        onStartRanking={handleStartRankingSharedList}
+      />
+    );
   } else if (unfinishedComparison) {
     currentPanel = (
       <ComparisonPanel
@@ -75,8 +133,10 @@ export default function Home() {
         onRankingComplete={handleRankingComplete}
       />
     );
+  } else if (urlItems.length > 0) {
+    currentPanel = <SetupPanel setList={handleSetList} urlItems={urlItems} />;
   } else if (list.length === 0) {
-    currentPanel = <SetupPanel list={list} setList={handleSetList} />;
+    currentPanel = <SetupPanel setList={handleSetList} urlItems={urlItems} />;
   } else {
     currentPanel = (
       <ComparisonPanel

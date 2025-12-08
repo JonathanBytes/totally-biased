@@ -1,0 +1,23 @@
+{
+  "navigation": {
+    "home": "Home",
+    "myLists": "My Lists",
+    "signIn": "Sign In"
+  },
+  "common": {
+    "language": "Language",
+    "english": "English",
+    "spanish": "Spanish",
+    "french": "French",
+    "german": "German",
+    "italian": "Italian",
+    "portuguese": "Portuguese",
+    "japanese": "Japanese",
+    "korean": "Korean",
+    "chinese": "Chinese"
+  },
+  "app": {
+    "title": "Totally biased",
+    "description": "A subjective sort app to rank by taste, bias, and gut instinct."
+  }
+}

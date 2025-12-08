@@ -14,6 +14,15 @@ export default defineSchema({
     description: v.optional(v.string()),
     // The actual sorted items (limited to 100 items)
     items: v.array(v.string()),
+    // Type of list: "basic" (view-only ranked list) or "advanced" (checklist with dates and reordering)
+    // Optional to support existing lists - defaults to "basic" if not present
+    listType: v.optional(v.union(v.literal("basic"), v.literal("advanced"))),
+    // Advanced list features (only used when listType is "advanced")
+    // Array of indices of completed items
+    completedItems: v.optional(v.array(v.number())),
+    // Object mapping item indices to dates (as timestamps)
+    // Using any() to allow dynamic keys (string indices mapping to timestamps)
+    itemDates: v.optional(v.any()),
     // Last updated timestamp
     updatedAt: v.number(),
   }).index("by_userId", ["userId"]),

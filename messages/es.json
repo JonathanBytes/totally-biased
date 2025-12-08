@@ -1,0 +1,23 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "myLists": "Mis Listas",
+    "signIn": "Iniciar Sesión"
+  },
+  "common": {
+    "language": "Idioma",
+    "english": "Inglés",
+    "spanish": "Español",
+    "french": "Francés",
+    "german": "Alemán",
+    "italian": "Italiano",
+    "portuguese": "Portugués",
+    "japanese": "Japonés",
+    "korean": "Coreano",
+    "chinese": "Chino"
+  },
+  "app": {
+    "title": "Totalmente sesgado",
+    "description": "Una aplicación de clasificación subjetiva para ordenar por gusto, sesgo e instinto."
+  }
+}

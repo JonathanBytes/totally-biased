@@ -1,0 +1,23 @@
+{
+  "navigation": {
+    "home": "ホーム",
+    "myLists": "マイリスト",
+    "signIn": "サインイン"
+  },
+  "common": {
+    "language": "言語",
+    "english": "英語",
+    "spanish": "スペイン語",
+    "french": "フランス語",
+    "german": "ドイツ語",
+    "italian": "イタリア語",
+    "portuguese": "ポルトガル語",
+    "japanese": "日本語",
+    "korean": "韓国語",
+    "chinese": "中国語"
+  },
+  "app": {
+    "title": "完全に偏った",
+    "description": "好み、偏見、直感でランク付けする主観的なソートアプリ。"
+  }
+}

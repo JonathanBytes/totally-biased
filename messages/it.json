@@ -1,0 +1,23 @@
+{
+  "navigation": {
+    "home": "Home",
+    "myLists": "Le Mie Liste",
+    "signIn": "Accedi"
+  },
+  "common": {
+    "language": "Lingua",
+    "english": "Inglese",
+    "spanish": "Spagnolo",
+    "french": "Francese",
+    "german": "Tedesco",
+    "italian": "Italiano",
+    "portuguese": "Portoghese",
+    "japanese": "Giapponese",
+    "korean": "Coreano",
+    "chinese": "Cinese"
+  },
+  "app": {
+    "title": "Totalmente di parte",
+    "description": "Un'app di ordinamento soggettiva per classificare per gusto, pregiudizio e istinto."
+  }
+}

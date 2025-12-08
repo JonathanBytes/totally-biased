@@ -1,0 +1,23 @@
+{
+  "navigation": {
+    "home": "Startseite",
+    "myLists": "Meine Listen",
+    "signIn": "Anmelden"
+  },
+  "common": {
+    "language": "Sprache",
+    "english": "Englisch",
+    "spanish": "Spanisch",
+    "french": "Französisch",
+    "german": "Deutsch",
+    "italian": "Italienisch",
+    "portuguese": "Portugiesisch",
+    "japanese": "Japanisch",
+    "korean": "Koreanisch",
+    "chinese": "Chinesisch"
+  },
+  "app": {
+    "title": "Völlig voreingenommen",
+    "description": "Eine subjektive Sortier-App zum Ordnen nach Geschmack, Voreingenommenheit und Bauchgefühl."
+  }
+}

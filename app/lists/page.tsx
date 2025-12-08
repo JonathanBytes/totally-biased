@@ -5,10 +5,17 @@ import { api } from "../../convex/_generated/api";
 import { Authenticated, useQuery } from "convex/react";
 import { useEffect, useState } from "react";
 import SaveListDrawer from "@/components/SaveListDrawer";
+import { BreadcrumbSchema } from "@/components/BreadcrumbSchema";
 
 const ListPage = () => {
+  const breadcrumbItems = [
+    { name: "Home", url: "https://rank.jonathanbytes.com" },
+    { name: "My Lists" },
+  ];
+
   return (
     <div>
+      <BreadcrumbSchema items={breadcrumbItems} />
       <Authenticated>
         <Content />
       </Authenticated>
@@ -19,7 +26,7 @@ const ListPage = () => {
 export default ListPage;
 
 function Content() {
-  const lists = useQuery(api.sortedLists.getForCurrentUserByUpdatedAt);
+  const lists = useQuery(api.sortedLists.getForCurrentUser);
   const [unsavedList, setUnsavedList] = useState<string[] | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -49,7 +56,7 @@ function Content() {
       )}
       <ul className="flex flex-wrap gap-4 justify-center items-center max-w-5xl">
         {lists.map((list) => (
-          <li key={list._id} className="min-w-[250px]">
+          <li key={list._id} className="min-w-[300px]">
             <ListCard list={list} />
           </li>
         ))}
