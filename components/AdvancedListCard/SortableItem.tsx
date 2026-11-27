@@ -159,7 +159,7 @@ export const SortableItem = React.memo<SortableItemProps>(function SortableItem(
                 mode="single"
                 selected={itemDate || undefined}
                 onSelect={handleDateChange}
-                initialFocus
+                autoFocus
               />
             </PopoverContent>
           </Popover>
@@ -196,7 +196,7 @@ export const SortableItem = React.memo<SortableItemProps>(function SortableItem(
                 mode="single"
                 selected={itemDate || undefined}
                 onSelect={handleDateChange}
-                initialFocus
+                autoFocus
               />
             </PopoverContent>
           </Popover>

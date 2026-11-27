@@ -3,7 +3,7 @@ import { ibm, inter, yeseva } from "./fonts";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
-import { shadcn } from "@clerk/themes";
+import { shadcn } from "@clerk/ui/themes";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import NavBar from "@/components/NavBar";
@@ -85,7 +85,7 @@ export default function RootLayout({
   };
 
   return (
-    <ClerkProvider appearance={{ baseTheme: shadcn }}>
+    <ClerkProvider appearance={{ theme: shadcn }}>
       <html lang="en" suppressHydrationWarning>
         <body
           className={`${inter.variable} ${ibm.variable} ${yeseva.variable} font-sans antialiased`}

@@ -33,6 +33,8 @@ function Content() {
   useEffect(() => {
     const storedList = localStorage.getItem("unsavedList");
     if (storedList) {
+      // Reads browser-only storage once on mount; must run after hydration.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUnsavedList(JSON.parse(storedList));
       setIsDrawerOpen(true);
     }
