@@ -20,8 +20,14 @@ export function CopyToClipboardButton({
 }: CopyToClipboardButtonProps) {
   const [copied, setCopied] = useState(false);
 
-  const onCopy = () => {
-    navigator.clipboard.writeText(textToCopy);
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+    } catch (error) {
+      console.error("Failed to copy to clipboard:", error);
+      toast.error("Failed to copy. Please copy manually.");
+      return;
+    }
     toast.success("Copied to clipboard!");
     setCopied(true);
 

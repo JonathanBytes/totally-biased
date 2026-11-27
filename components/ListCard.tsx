@@ -191,7 +191,7 @@ const AlertComponent = ({ handleDelete }: AlertComponentProps) => {
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete this{" "}
-            <span className="font-bold">totally biased</span>list from our
+            <span className="font-bold">totally biased</span> list from our
             servers.
           </AlertDialogDescription>
         </AlertDialogHeader>

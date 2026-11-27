@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { DragEndEvent } from "@dnd-kit/core";
@@ -19,20 +19,26 @@ export const useAdvancedListCard = (list: AdvancedListItem) => {
     list.completedItems || []
   );
 
+  // Sync optimistic state when list changes from server.
+  // Done during render (React's "adjust state when a prop changes" pattern)
+  // so the optimistic state never renders one frame stale.
+  const [syncedItems, setSyncedItems] = useState(list.items);
+  if (list.items !== syncedItems) {
+    setSyncedItems(list.items);
+    setOptimisticItems(list.items);
+  }
+
+  const [syncedCompletedItems, setSyncedCompletedItems] = useState(list.completedItems);
+  if (list.completedItems !== syncedCompletedItems) {
+    setSyncedCompletedItems(list.completedItems);
+    setOptimisticCompletedItems(list.completedItems || []);
+  }
+
   // Mutations
   const toggleItemCompletion = useMutation(api.sortedLists.toggleItemCompletion);
   const updateItemDate = useMutation(api.sortedLists.updateItemDate);
   const reorderItems = useMutation(api.sortedLists.reorderItems);
   const removeItem = useMutation(api.sortedLists.removeItem);
-
-  // Sync optimistic state when list changes from server
-  useEffect(() => {
-    setOptimisticItems(list.items);
-  }, [list.items]);
-
-  useEffect(() => {
-    setOptimisticCompletedItems(list.completedItems || []);
-  }, [list.completedItems]);
 
   // Handlers
   const handleDragEnd = useCallback(

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import SetupPanel from "@/components/SetupPanel";
 import ComparisonPanel from "@/components/ComparisonPanel";
 import ResultsPanel from "@/components/ResultsPanel";
+import { decodeSharedList } from "@/lib/shareLink";
 
 export default function Home() {
   type HistoryItem = {
@@ -29,6 +30,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [urlItems, setUrlItems] = useState<string[]>([]);
 
+  /* eslint-disable react-hooks/set-state-in-effect -- one-time mount read of browser-only state (URL hash, localStorage); must run after hydration */
   useEffect(() => {
     // Check for URL parameters
     if (typeof window !== "undefined") {
@@ -36,29 +38,13 @@ export default function Home() {
       // Support new shorter format (#i=)
       if (hash.startsWith("#i=")) {
         try {
-          const encodedItems = hash.substring(3); // Remove "#i="
-          // Convert URL-safe Base64 back to regular Base64
-          const base64 = encodedItems.replace(/-/g, "+").replace(/_/g, "/");
-          // Add padding if needed
-          const paddedBase64 =
-            base64 + "=".repeat((4 - (base64.length % 4)) % 4);
-          const jsonString = atob(paddedBase64);
-          const decodedData = JSON.parse(jsonString);
-
-          // Handle format with ranked flag
-          if (
-            typeof decodedData === "object" &&
-            decodedData.items &&
-            Array.isArray(decodedData.items)
-          ) {
-            if (decodedData.items.length > 0) {
-              setUrlItems(decodedData.items);
-              //setList(decodedData.items);
-              if (decodedData.ranked) {
-                setList(decodedData.items);
-                setIsRanked(true);
-                setIsSharedRankedList(true);
-              }
+          const shared = decodeSharedList(hash.substring(3)); // Remove "#i="
+          if (shared) {
+            setUrlItems(shared.items);
+            if (shared.ranked) {
+              setList(shared.items);
+              setIsRanked(true);
+              setIsSharedRankedList(true);
             }
           }
         } catch (e) {
@@ -85,6 +71,7 @@ export default function Home() {
 
     setIsLoading(false);
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleSetList = (newList: string[]) => {
     setList(newList);

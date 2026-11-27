@@ -46,7 +46,8 @@ export const useComparison = (
     } else {
       setItems(newItems);
       setCurrentIndex(currentIndex + 1);
-      setComparisonIndex(currentIndex - 1);
+      // Next item starts against the last item of the sorted prefix (index currentIndex).
+      setComparisonIndex(currentIndex);
     }
   };
 

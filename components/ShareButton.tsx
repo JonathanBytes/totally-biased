@@ -4,6 +4,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Share2, Trophy, FileText } from "lucide-react";
 import { toast } from "sonner";
+import { encodeSharedList } from "@/lib/shareLink";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,19 +28,7 @@ export function ShareButton({
     isRanked: boolean = false
   ): string => {
     const baseUrl = window.location.origin;
-    // Use Base64 encoding for shorter URLs
-    const data = {
-      items: itemsToShare,
-      ranked: isRanked,
-    };
-    const jsonString = JSON.stringify(data);
-    const base64Encoded = btoa(jsonString);
-    // Make it URL-safe by replacing characters
-    const urlSafeBase64 = base64Encoded
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=/g, "");
-    return `${baseUrl}#i=${urlSafeBase64}`;
+    return `${baseUrl}#i=${encodeSharedList({ items: itemsToShare, ranked: isRanked })}`;
   };
 
   const handleShare = async (

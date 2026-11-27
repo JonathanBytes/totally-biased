@@ -32,10 +32,16 @@ const SaveListForm = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // `required` accepts whitespace-only input, so check the trimmed title here.
+    const trimmedTitle = title.trim();
+    if (!trimmedTitle) {
+      toast.error("Please enter a title.");
+      return;
+    }
     setIsSubmitting(true);
     try {
       await createList({
-        title,
+        title: trimmedTitle,
         description,
         items: list,
         listType,
